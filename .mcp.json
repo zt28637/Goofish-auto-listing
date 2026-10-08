@@ -1,0 +1,8 @@
+{
+    "shadowbot-canvas": {
+      "command": "python",
+      "args": ["-X", "utf8", "project/tools/shadowbot-canvas/sb_canvas_mcp.py"]
+    }
+}
+
+

@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual Environment
+venv/
+.venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 工具运行态（非交付物）
+.workbuddy/
+
+# 运行时数据（不上传）
+project/runtime/products/
+project/runtime/logs/
+project/runtime/results/
+project/runtime/data/
+project/runtime/test/
+project/runtime/*.xlsx
+
+# 临时文件
+*.tmp
+*.bak
+~$*.xlsx
+*_tmp.xlsx
+*_new.xlsx
+
+# 脚本工具（一次性）
+fix_excel.py
+bailian-install.ps1
+
+# 操作系统
+.DS_Store
+Thumbs.db
+desktop.ini
