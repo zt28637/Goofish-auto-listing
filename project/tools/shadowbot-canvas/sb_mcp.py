@@ -62,7 +62,7 @@ def discover_port() -> int:
     raise RuntimeError("未发现影刀编辑器 MCP 端口——请确认编辑器已启动并停在应用页")
 
 
-def call(tool: str, arguments: dict | None = None, port: int | None = None):
+def call(tool: str, arguments: dict | None = None, port: int | None = None, timeout: int = 60):
     """调用一个 studio-mcp 工具，返回解析后的 JSON 内容。"""
     port = port or discover_port()
     payload = {
@@ -80,7 +80,7 @@ def call(tool: str, arguments: dict | None = None, port: int | None = None):
         },
         method="POST",
     )
-    with urllib.request.urlopen(req, timeout=60) as resp:
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
         body = resp.read().decode("utf-8", errors="replace")
     # 兼容 SSE 帧：data: {...}
     for line in body.splitlines():

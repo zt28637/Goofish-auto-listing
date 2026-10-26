@@ -1,0 +1,10 @@
+# 一次性建档：把日常 Edge 的默认档案克隆给自动化用（登录态跟走，原件零伤害）
+# 顺序：① 保存手头页面 → ② 关光 Edge（下面第一行会强杀） → ③ 整段贴进 PowerShell 回车
+
+taskkill /F /IM msedge.exe
+Start-Sleep 2
+robocopy "C:\Users\Admin\AppData\Local\Microsoft\Edge\User Data" "D:\个人知识库\DrissionPage学习\edge_profile" /E /MT:16 /R:1 /W:1 /XD "Cache" "Code Cache" "GrShaderCache" "ShaderCache" "component_crx_cache" "Service Worker" /XF "*.tmp" "*.log"
+
+# 完成后直接跑：python D:\个人知识库\DrissionPage学习\咸鱼_批量上架.py
+# 预期：带着你全部登录态启动；若闲鱼会话过期→手机扫最后一次码，此后扫码态存在克隆档案里
+# ⚠️ 备忘：以后重跑本克隆会覆盖扫码后的新登录态——重建前先改名备份旧档

@@ -17,8 +17,10 @@ import contextlib
 import io
 import json
 import os
+import re
 import sys
 import datetime
+import urllib.request
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -62,7 +64,51 @@ TOOLS = [
         "description": "从影刀编辑器安装目录 DLL + 应用 xbot_extensions 明文目录重建中文指令目录 tools/sb_blocks_zh.json。仅编辑器升级或指令名渲染异常时需要。",
         "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
     },
+    {
+        "name": "sb_refresh_tools",
+        "description": "重新拉取编辑器 studio-mcp 的 tools/list，写入 studio_tools.json 快照。编辑器升级后调用，重启/重连 MCP 生效。",
+        "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
+    },
 ]
+
+# ---- 编辑器 studio-mcp 全量工具代理 ----
+# studio_tools.json = tools/list 快照（随编辑器版本变化，sb_refresh_tools 重建）。
+# 工具名里的点号在 MCP 客户端不合法，统一换成下划线并加 sb_ 前缀：
+#   flow.edit_blocks -> sb_flow_edit_blocks（描述里保留原名，便于对照影刀文档）
+STUDIO_TOOLS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "studio_tools.json")
+STUDIO_BY_PUBLIC = {}
+_STUDIO_TIMEOUT = {"app.run": 130, "app.wait_run_finish": 130}
+
+
+def _sanitize(name: str) -> str:
+    return "sb_" + re.sub(r"[^A-Za-z0-9_-]", "_", name)
+
+
+def _load_studio_tools() -> list:
+    try:
+        with open(STUDIO_TOOLS_FILE, encoding="utf-8") as f:
+            return json.load(f).get("tools", [])
+    except (OSError, ValueError):
+        return []
+
+
+def _extend_studio_tools() -> list:
+    extra, used = [], {t["name"] for t in TOOLS}
+    for t in _load_studio_tools():
+        pub = _sanitize(t["name"])
+        while pub in used:          # 极端情况：多个原名压成同名
+            pub += "_"
+        used.add(pub)
+        STUDIO_BY_PUBLIC[pub] = t["name"]
+        extra.append({
+            "name": pub,
+            "description": f"[studio-mcp: {t['name']}] " + (t.get("description") or ""),
+            "inputSchema": t.get("inputSchema") or {"type": "object", "properties": {}},
+        })
+    return extra
+
+
+TOOLS.extend(_extend_studio_tools())
 
 
 def _friendly(exc: Exception) -> str:
@@ -115,12 +161,45 @@ def tool_refresh_catalog() -> str:
     return buf.getvalue() or "完成（无输出）"
 
 
+def tool_studio_call(original: str, args: dict) -> str:
+    """转发到编辑器 studio-mcp。run 类工具放宽超时（app.run 可内联等待 115s）。"""
+    out = sb_mcp.call(original, args, timeout=_STUDIO_TIMEOUT.get(original, 60))
+    return out if isinstance(out, str) else json.dumps(out, ensure_ascii=False, indent=1)
+
+
+def tool_refresh_tools() -> str:
+    """重新拉取编辑器 tools/list 写入快照；当前进程的工具表不变，重连后生效。"""
+    port = sb_mcp.discover_port()
+    payload = {"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {}}
+    req = urllib.request.Request(
+        f"http://127.0.0.1:{port}/api/v1/mcp",
+        data=json.dumps(payload).encode("utf-8"), method="POST",
+        headers={"Content-Type": "application/json",
+                 "Accept": "application/json, text/event-stream"},
+    )
+    body = urllib.request.urlopen(req, timeout=15).read().decode("utf-8", "replace")
+    for line in body.splitlines():
+        if line.startswith("data:"):
+            body = line[5:].strip()
+            break
+    tools = json.loads(body)["result"]["tools"]
+    snap = {"fetched_at": f"{datetime.datetime.now():%Y-%m-%d %H:%M:%S}", "port": port, "tools": tools}
+    with open(STUDIO_TOOLS_FILE, "w", encoding="utf-8") as f:
+        json.dump(snap, f, ensure_ascii=False, indent=1)
+    return f"已更新 {len(tools)} 个工具快照：{STUDIO_TOOLS_FILE}（重连 MCP 后生效）"
+
+
 HANDLERS = {
     "sb_list_flows": lambda args: tool_list_flows(),
     "sb_get_canvas": lambda args: tool_get_canvas(args["flow_id"]),
     "sb_transcribe_canvas": lambda args: tool_transcribe_canvas(args.get("flow_id"), bool(args.get("dry_run", False))),
     "sb_refresh_catalog": lambda args: tool_refresh_catalog(),
+    "sb_refresh_tools": lambda args: tool_refresh_tools(),
 }
+
+# 40 个 studio-mcp 工具逐个注册为转发 handler（闭包用工厂绑定，避免迟绑定）
+for _pub, _orig in STUDIO_BY_PUBLIC.items():
+    HANDLERS[_pub] = (lambda orig: lambda args: tool_studio_call(orig, args))(_orig)
 
 
 def _send(out, obj) -> None:

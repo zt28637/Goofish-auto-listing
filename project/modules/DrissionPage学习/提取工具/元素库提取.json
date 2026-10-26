@@ -1,0 +1,112 @@
+{
+ "手机号输入框": {
+  "dp": "〔iframe内〕get_frame('frameborder=none scrolling=no data-spm-anchor-id=a21ybx.publish.0.i1.4f3a73104R0') 后 xpath:/html/div[1]/div[1]/div[1]/div[1]/form[1]/div[1]/div[2]/input[1]",
+  "note": "跨iframe",
+  "depth": 19
+ },
+ "密码登录选项": {
+  "dp": "〔iframe内〕get_frame('frameborder=none scrolling=no') 后 xpath:/html/div[1]/div[1]/div[1]/div[1]/div[1]/a[2]",
+  "note": "跨iframe",
+  "depth": 17
+ },
+ "登录表单短信登录": {
+  "dp": "〔iframe内〕get_frame('frameborder=none scrolling=no data-spm-anchor-id=a21ybx.publish.0.i1.4f3a73104R0') 后 xpath:/html/div[1]/div[1]",
+  "note": "跨iframe",
+  "depth": 13
+ },
+ "《隐私政策》": {
+  "dp": "〔iframe内〕get_frame('frameborder=none scrolling=no data-spm-anchor-id=a21ybx.publish.0.i1.4f3a73104R0') 后 xpath:/html/div[1]/div[1]/div[1]/div[1]/form[1]/div[8]/div[1]/input[1]",
+  "note": "跨iframe",
+  "depth": 19
+ },
+ "登录按钮": {
+  "dp": "〔iframe内〕get_frame('frameborder=none scrolling=no data-spm-anchor-id=a21ybx.publish.0.i1.4f3a73104R0') 后 xpath:/html/div[1]/div[1]/div[1]/div[1]/form[1]/div[6]/button[1]",
+  "note": "跨iframe",
+  "depth": 18
+ },
+ "文件上传": {
+  "dp": "xpath:/html/body/div[2]/div[2]/div[1]/form[1]/div[1]/div[2]/div[2]/div[1]/div[2]/div[1]/div[1]/div[1]/span[1]/div[1]/span[1]/div[1]",
+  "note": "",
+  "depth": 16
+ },
+ "描述输入框": {
+  "dp": "xpath:/html/body/div[2]/div[2]/div[1]/form[1]/div[1]/div[2]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]",
+  "note": "",
+  "depth": 13
+ },
+ "分类下拉框": {
+  "dp": "xpath:/html/body/div[2]/div[2]/div[1]/form[1]/div[1]/div[2]/div[4]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]",
+  "note": "",
+  "depth": 15
+ },
+ "第一分类框": {
+  "dp": "xpath:/html/body/div[2]/div[2]/div[1]/form[1]/div[1]/div[2]/div[4]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/span[2]",
+  "note": "",
+  "depth": 16
+ },
+ "选项列表": {
+  "dp": "xpath:/html/body/div[5]/div[1]",
+  "note": "",
+  "depth": 2
+ },
+ "价格输入框": {
+  "dp": "xpath:/html/body/div[2]/div[2]/div[1]/form[1]/div[1]/div[3]/div[2]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/span[1]/input[1]",
+  "note": "",
+  "depth": 15
+ },
+ "原价输入框": {
+  "dp": "xpath:/html/body/div[2]/div[2]/div[1]/form[1]/div[1]/div[3]/div[2]/div[1]/div[2]/div[1]/div[2]/div[1]/div[1]/span[1]/input[1]",
+  "note": "",
+  "depth": 15
+ },
+ "包邮按钮": {
+  "dp": "xpath:/html/body/div[2]/div[2]/div[1]/form[1]/div[1]/div[5]/div[2]/div[1]/div[1]/div[1]/div[1]/label[1]/span[1]/input[1]",
+  "note": "",
+  "depth": 14
+ },
+ "按距离计费": {
+  "dp": "xpath:/html/body/div[2]/div[2]/div[1]/form[1]/div[1]/div[5]/div[2]/div[1]/div[1]/div[1]/div[1]/label[2]/span[1]/input[1]",
+  "note": "",
+  "depth": 14
+ },
+ "一口价": {
+  "dp": "xpath:/html/body/div[2]/div[2]/div[1]/form[1]/div[1]/div[5]/div[2]/div[1]/div[1]/div[1]/div[1]/label[3]/span[1]/input[1]",
+  "note": "",
+  "depth": 14
+ },
+ "无需邮寄": {
+  "dp": "xpath:/html/body/div[2]/div[2]/div[1]/form[1]/div[1]/div[5]/div[2]/div[1]/div[1]/div[1]/div[1]/label[4]/span[1]/input[1]",
+  "note": "",
+  "depth": 14
+ },
+ "支持自提": {
+  "dp": "xpath:/html/body/div[2]/div[2]/div[1]/form[1]/div[1]/div[5]/div[2]/div[1]/div[1]/div[1]/button[1]/span[1]",
+  "note": "",
+  "depth": 12
+ },
+ "发布": {
+  "dp": "xpath:/html/body/div[2]/div[2]/div[2]/button[1]",
+  "note": "",
+  "depth": 4
+ },
+ "分类*": {
+  "dp": "xpath:/html/body/div[2]/div[2]/div[1]/form[1]/div[1]/div[2]/div[4]/div[1]/div[2]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]",
+  "note": "",
+  "depth": 15
+ },
+ "发饰/头饰": {
+  "dp": "xpath:/html/body/div[5]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[2]",
+  "note": "",
+  "depth": 8
+ },
+ "发布成功": {
+  "dp": "xpath:/html/body/div[6]/div[1]/div[1]/div[1]/div[1]/span[2]",
+  "note": "",
+  "depth": 6
+ },
+ "咸鱼ID": {
+  "dp": "xpath:/html/body/div[2]/div[2]/div[1]/div[1]/a[1]/div[1]/div[2]/div[1]/div[1]",
+  "note": "",
+  "depth": 9
+ }
+}

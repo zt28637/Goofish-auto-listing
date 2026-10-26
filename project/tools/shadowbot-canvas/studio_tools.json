@@ -1,0 +1,1068 @@
+{
+ "fetched_at": "2026-11-07T09:42:42",
+ "port": 42500,
+ "tools": [
+  {
+   "name": "app.copy_flow",
+   "description": "Copy an existing flow (VisualFlow blocks/parameters or CodeFlow source/parameters) into a new flow in the current app. new_name is optional; omit it to keep the auto-generated '<name>(copy)' name. An explicitly supplied CodeFlow name must already be Unicode NFKC-normalized. Fails if new_name is invalid or collides with an existing flow's name.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "flow_id": {
+      "minLength": 1,
+      "type": "string"
+     },
+     "new_name": {
+      "description": "Optional. Name for the copy; must not collide with an existing flow name. For CodeFlow, an explicitly supplied basename must already be Unicode NFKC-normalized; non-NFKC Unicode is rejected and is not rewritten. The API adds .py when omitted and normalizes extension casing only.",
+      "type": "string"
+     }
+    },
+    "required": [
+     "flow_id"
+    ],
+    "type": "object"
+   }
+  },
+  {
+   "name": "app.create_flow",
+   "description": "Create one or more flows in the current app in a single call. Each flows[] item requires flow_name and kind: visual for VisualFlow or code for CodeFlow. Results preserve input order and report each created flow_id or failure; partial success is possible.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "flows": {
+      "description": "Flows to create, in execution order. Supports 1 to 50 items.",
+      "items": {
+       "additionalProperties": false,
+       "properties": {
+        "flow_name": {
+         "description": "For CodeFlow, the basename must already be Unicode NFKC-normalized; non-NFKC Unicode is rejected and is not rewritten. Use a letter or ASCII underscore first, followed by Unicode letters, digits, ASCII underscores, or ASCII parentheses; include at least one letter or digit. Path separators and brackets are forbidden. Python keywords and portable reserved filenames are forbidden. The API adds .py when omitted and normalizes .PY/.Py to .py; for VisualFlow, it adds .flow when omitted and normalizes .FLOW/.Flow to .flow; other extensions are invalid.",
+         "minLength": 1,
+         "type": "string"
+        },
+        "kind": {
+         "description": "Required flow kind: visual for VisualFlow or code for CodeFlow.",
+         "enum": [
+          "visual",
+          "code"
+         ],
+         "type": "string"
+        }
+       },
+       "required": [
+        "flow_name",
+        "kind"
+       ],
+       "type": "object"
+      },
+      "maxItems": 50,
+      "minItems": 1,
+      "type": "array"
+     }
+    },
+    "required": [
+     "flows"
+    ],
+    "type": "object"
+   }
+  },
+  {
+   "name": "app.databook.clear",
+   "description": "Clear all current Studio data table cell values. Column definitions remain unchanged.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {},
+    "type": "object"
+   }
+  },
+  {
+   "name": "app.databook.read",
+   "description": "Read current Studio data table rows. Paginated via offset/max_rows (default 200, max 2000); response includes total_rows.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "max_rows": {
+      "description": "Max number of rows to return. Default 200, max 2000. Accepts a numeric string too.",
+      "type": [
+       "integer",
+       "string"
+      ]
+     },
+     "offset": {
+      "description": "0-based start row index. Defaults to 0. Accepts a numeric string too.",
+      "minimum": 0,
+      "type": [
+       "integer",
+       "string"
+      ]
+     }
+    },
+    "type": "object"
+   }
+  },
+  {
+   "name": "app.delete_flow",
+   "description": "Delete one or more flows in a single call using flow_ids[]. The main flow cannot be deleted.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "flow_ids": {
+      "items": {
+       "minLength": 1,
+       "type": "string"
+      },
+      "minItems": 1,
+      "type": "array"
+     },
+     "force": {
+      "description": "Must only be set after you have informed the user that deleting a flow of a published instruction removes the instruction block and breaks apps that use this instruction after upgrade, and the user explicitly confirms.",
+      "type": "boolean"
+     }
+    },
+    "required": [
+     "flow_ids"
+    ],
+    "type": "object"
+   }
+  },
+  {
+   "name": "app.get_info",
+   "description": "Get current app summary: app/flow state for inspection before editing.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {},
+    "type": "object"
+   }
+  },
+  {
+   "name": "app.global_variables.list",
+   "description": "List app global variables with pagination. Each item returns name/type/kind/value. Use offset/limit to page; default page size 50, max 200.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "offset": {
+      "default": 0,
+      "description": "0-based offset for pagination.",
+      "minimum": 0,
+      "type": "integer"
+     },
+     "limit": {
+      "default": 50,
+      "description": "Page size. Default 50, max 200.",
+      "maximum": 200,
+      "minimum": 1,
+      "type": "integer"
+     }
+    },
+    "type": "object"
+   }
+  },
+  {
+   "name": "app.global_variables.write",
+   "description": "Add, fully update, or remove app global variables. op=add creates a variable or fully updates the existing variable with the same name; op=remove deletes it. Runtime reference: `glv['varName']`. `type`: `str`, `int`, `bool`, `list`, `dict`, `any`. `kind`: `Text`, `Expression`. Saves automatically.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "operations": {
+      "items": {
+       "additionalProperties": false,
+       "properties": {
+        "kind": {
+         "description": "Required when op=add. Allowed values: `Text`, `Expression`. This does not change runtime reference syntax; runtime still uses `glv['name']`.",
+         "enum": [
+          "Text",
+          "Expression"
+         ],
+         "type": "string"
+        },
+        "name": {
+         "description": "Variable name. Runtime references must use `glv['name']`.",
+         "minLength": 1,
+         "type": "string"
+        },
+        "op": {
+         "description": "Operation. add is add-or-update (upsert): it creates a variable or fully updates the existing variable with the same name. remove deletes the variable.",
+         "enum": [
+          "add",
+          "remove"
+         ],
+         "type": "string"
+        },
+        "type": {
+         "description": "Required when op=add. Allowed values: `str`, `int`, `bool`, `list`, `dict`, `any`.",
+         "enum": [
+          "str",
+          "int",
+          "bool",
+          "list",
+          "dict",
+          "any"
+         ],
+         "minLength": 1,
+         "type": "string"
+        },
+        "value": {
+         "description": "Raw value content for op=add. Reference other globals with expressions such as `glv['other_name']` when needed.",
+         "type": "string"
+        }
+       },
+       "required": [
+        "op",
+        "name"
+       ],
+       "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+     }
+    },
+    "required": [
+     "operations"
+    ],
+    "type": "object"
+   }
+  },
+  {
+   "name": "app.list_flows",
+   "description": "List flows in current app.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {},
+    "type": "object"
+   }
+  },
+  {
+   "name": "app.logs",
+   "description": "Read ordinary runtime logs with cursor-based pagination. Use this for execution timelines and detailed runtime evidence.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "cursor": {
+      "type": "integer"
+     },
+     "limit": {
+      "type": "integer"
+     }
+    },
+    "type": "object"
+   }
+  },
+  {
+   "name": "app.reload",
+   "description": "Close and reopen the current app from disk. Unsaved in-memory changes are discarded.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {},
+    "type": "object"
+   }
+  },
+  {
+   "name": "app.resource.add",
+   "description": "Add a single resource file to the current app by local file path. Validates the file exists, name is not already in use, and total size stays within 20MB before copying.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "file": {
+      "description": "Absolute path to the local file to add as a resource.",
+      "type": "string"
+     }
+    },
+    "required": [
+     "file"
+    ],
+    "type": "object"
+   }
+  },
+  {
+   "name": "app.resource.list",
+   "description": "List resource files in the current app.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {},
+    "type": "object"
+   }
+  },
+  {
+   "name": "app.resource.remove",
+   "description": "Remove resource files by name from the current app.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "files": {
+      "items": {
+       "type": "string"
+      },
+      "minItems": 1,
+      "type": "array"
+     }
+    },
+    "required": [
+     "files"
+    ],
+    "type": "object"
+   }
+  },
+  {
+   "name": "app.resource.rename",
+   "description": "Rename a resource file in the current app. Fails if the target name is already in use.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "name": {
+      "description": "Current resource file name.",
+      "type": "string"
+     },
+     "new_name": {
+      "description": "New resource file name. Must not collide with an existing resource file name.",
+      "type": "string"
+     }
+    },
+    "required": [
+     "name",
+     "new_name"
+    ],
+    "type": "object"
+   }
+  },
+  {
+   "name": "app.rename_flow",
+   "description": "Rename a flow. The main flow cannot be renamed. Preserve the existing flow naming rules: VisualFlow names use '<name>.flow'; CodeFlow names use '<name>.py', and the basename must already be Unicode NFKC-normalized and use the supported importlib module-name subset: it may contain Unicode letters, digits, ASCII underscores, and ASCII parentheses; the first character must be a letter or underscore and the name must contain at least one letter or digit; path separators and brackets are forbidden, must not be a Python keyword, and must be portable as a flow filename. Non-NFKC Unicode is rejected and is not rewritten. For CodeFlow, the API adds '.py' when the extension is omitted and normalizes '.PY' and '.Py' to '.py'; for VisualFlow, it adds '.flow' when omitted and normalizes '.FLOW' and '.Flow' to '.flow'; other extensions are invalid.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "flow_id": {
+      "minLength": 1,
+      "type": "string"
+     },
+     "new_name": {
+      "description": "Flow name rules: VisualFlow uses '<name>.flow'. CodeFlow uses '<name>.py', where the basename must already be Unicode NFKC-normalized and may contain Unicode letters, digits, ASCII underscores, and ASCII parentheses; the first character must be a letter or underscore and the name must contain at least one letter or digit; path separators and brackets are forbidden, must not be a Python keyword, and must be portable as a flow filename. Non-NFKC Unicode is rejected and is not rewritten. For CodeFlow, the API adds '.py' when omitted and normalizes '.PY' and '.Py' to '.py'; for VisualFlow, it adds '.flow' when omitted and normalizes '.FLOW' and '.Flow' to '.flow'; do not use another extension.",
+      "minLength": 1,
+      "type": "string"
+     },
+     "force": {
+      "description": "Must only be set after you have informed the user that renaming a flow of a published instruction changes the instruction block name and breaks apps that use this instruction after upgrade, and the user explicitly confirms.",
+      "type": "boolean"
+     }
+    },
+    "required": [
+     "flow_id",
+     "new_name"
+    ],
+    "type": "object"
+   }
+  },
+  {
+   "name": "app.run",
+   "description": "Run studio flow. Pass `flow_id` to run an explicit target; omit it only when the current active flow is already the intended target. Values passed by `process.run` override only the corresponding input defaults. A second run is rejected with `already_running`. The tool automatically saves, assigns a stable `run_id`, captures the declared Out parameter values from `main(args)`, and waits inline (see `wait_timeout`, default 90s). Runtime `result.outputs` contains the captured Out values. Complex values remain typed JSON. `wait_result` is a compact wait summary; canonical completion fields and the full runtime result remain at the top level. OpenCode terminates MCP calls after 120 seconds, so waits above 115 seconds are automatically clamped to 115 seconds. `run_succeeded=true` is canonical engine success; false means failed/canceled, while null means completion could not yet be verified. If the user manually pauses or stops the run, the tool returns `code=user_paused`/`user_paused=true` or `code=user_stopped`/`user_stopped=true`; stop autonomous work immediately and ask the user what to do next. When the inline wait finishes (`terminal_status` is present), this response already contains the final runtime result - do not call `app.wait_run_finish` or `app.run_result` again. Only on timeout, continue with `app.wait_run_finish` and pass the returned `run_id` instead of rerunning. Read ordinary runtime evidence with `app.logs`; never add transport markers to Flow code or logs. MCP runs suppress runtime error dialogs by default.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "flow_id": {
+      "type": "string"
+     },
+     "suppress_error_dialogs": {
+      "type": "boolean"
+     },
+     "wait_timeout": {
+      "description": "Seconds to wait inline for the run to finish before returning. Defaults to 90; pass 0 to return immediately without waiting. OpenCode's MCP transport timeout is 120 seconds, so values above 115 are clamped to 115.",
+      "type": "integer"
+     }
+    },
+    "type": "object"
+   }
+  },
+  {
+   "name": "app.run_result",
+   "description": "Re-read the completed runtime result for the MCP-started Flow identified by `run_id`. Use this only when the completion payload is not already at hand (the run finished in an earlier turn or its response was lost); `app.run` and `app.wait_run_finish` already return the same completion fields inline, so never call this right after either of them reports a `terminal_status`. Pass the stable `run_id` returned by `app.run`; the tool never falls back to a different or merely latest run. A successful run may have no declared Out values and returns `success=true` with `code=runtime_result_not_produced` and `result=null` - treat that as a successful run without a runtime result, not an error. The response repeats canonical run fields (`active`, `terminal_status`, `run_succeeded`, and `verification`) and uses the same result shape as `app.run` and `app.wait_run_finish`: captured declared Out values are in `result.outputs`. Internal `process.run` subflow results are not separately captured; complex values remain typed JSON. The complete result is returned inline regardless of size; runtime logs remain available through `app.logs`.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "run_id": {
+      "description": "Required stable run_id returned by app.run.",
+      "minLength": 1,
+      "type": "string"
+     }
+    },
+    "required": [
+     "run_id"
+    ],
+    "type": "object"
+   }
+  },
+  {
+   "name": "app.save",
+   "description": "Save and compile current app. If the app name is empty, MCP save fills it automatically.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {},
+    "type": "object"
+   }
+  },
+  {
+   "name": "app.stop_run",
+   "description": "Stop the currently running/paused studio flow (interrupts `app.run`). An accepted stop always reports `run_succeeded=false`; `run_id` is returned only when runtime diagnostics correlate the stopped engine run with the tracked MCP run. Returns `accepted=false` with code `not_running` if there is no active run to stop.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {},
+    "type": "object"
+   }
+  },
+  {
+   "name": "app.update_info",
+   "description": "Update app metadata and settings (name, description, instruction, persist_databook, allow_view_source). Saves automatically. Metadata and settings are applied sequentially; when both groups are requested, inspect metadata/settings and partial_success because one group may succeed before the other fails.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "allow_view_source": {
+      "type": "boolean"
+     },
+     "description": {
+      "type": "string"
+     },
+     "instruction": {
+      "type": "string"
+     },
+     "name": {
+      "type": "string"
+     },
+     "persist_databook": {
+      "type": "boolean"
+     }
+    },
+    "type": "object"
+   }
+  },
+  {
+   "name": "app.wait_run_finish",
+   "description": "Continue waiting for the MCP-started Flow identified by `run_id`. Pass the stable `run_id` returned by `app.run`; the tool never waits for a different or merely latest run. It returns compact wait fields (`status`, `code`, `timeout_seconds`, and `elapsed_ms`), canonical run fields (`active`, `terminal_status`, `run_succeeded`, and `verification`), and the same runtime result shape as the other run tools. On finish, captured declared Out values are in `result.outputs`; internal `process.run` subflow results are not separately captured. If it returns `user_paused=true` or `user_stopped=true`, stop autonomous work immediately and ask the user what to do next. Use this only after `app.run` returned a timeout, and never rerun solely to obtain a success boolean. OpenCode terminates MCP calls after 120 seconds, so waits above 115 seconds are automatically clamped to 115 seconds; call again with the same `run_id` after another timeout. On finish this response already contains the final runtime result - do not call `app.run_result` afterwards.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "poll_interval_ms": {
+      "description": "Optional polling interval in milliseconds. Defaults to 250.",
+      "type": "integer"
+     },
+     "timeout": {
+      "description": "Maximum wait time in seconds. Defaults to 90. OpenCode's MCP transport timeout is 120 seconds, so values above 115 are clamped to 115.",
+      "type": "integer"
+     },
+     "run_id": {
+      "description": "Required stable run_id returned by app.run.",
+      "minLength": 1,
+      "type": "string"
+     }
+    },
+    "required": [
+     "run_id"
+    ],
+    "type": "object"
+   }
+  },
+  {
+   "name": "codeflow.edit",
+   "description": "Replace exact text in the current in-memory CodeFlow source. With replace_all=false, old_string must match exactly once; zero or multiple matches fail without mutation. Validates the complete edited source with Python ast.parse, rejects glv usage without `from .package import variables as glv` before saving, and preserves current flow parameters.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "flow_id": {
+      "minLength": 1,
+      "type": "string"
+     },
+     "new_string": {
+      "description": "Replacement source text. Must differ from old_string and may be empty.",
+      "type": "string"
+     },
+     "old_string": {
+      "description": "Exact source text to replace.",
+      "minLength": 1,
+      "type": "string"
+     },
+     "replace_all": {
+      "description": "Replace every exact occurrence of old_string. Defaults to false.",
+      "type": "boolean"
+     }
+    },
+    "required": [
+     "flow_id",
+     "old_string",
+     "new_string"
+    ],
+    "type": "object"
+   }
+  },
+  {
+   "name": "codeflow.read",
+   "description": "Read the current in-memory CodeFlow source without returning editable_definition. Uses 1-based offset/limit pagination, rejects VisualFlow targets, and reads at most 2000 lines per call.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "flow_id": {
+      "minLength": 1,
+      "type": "string"
+     },
+     "limit": {
+      "description": "Maximum lines returned. Defaults to and cannot exceed 2000.",
+      "maximum": 2000,
+      "minimum": 1,
+      "type": "integer"
+     },
+     "offset": {
+      "description": "1-based source line to start reading from. Defaults to 1.",
+      "minimum": 1,
+      "type": "integer"
+     }
+    },
+    "required": [
+     "flow_id"
+    ],
+    "type": "object"
+   }
+  },
+  {
+   "name": "codeflow.write",
+   "description": "Replace the complete current in-memory CodeFlow source. The content may be empty. Validates the full source with Python ast.parse, rejects glv usage without `from .package import variables as glv` before saving, and preserves current flow parameters and other definition fields.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "content": {
+      "description": "Complete CodeFlow Python source. This replaces the current source in full.",
+      "type": "string"
+     },
+     "flow_id": {
+      "minLength": 1,
+      "type": "string"
+     }
+    },
+    "required": [
+     "flow_id",
+     "content"
+    ],
+    "type": "object"
+   }
+  },
+  {
+   "name": "diagnostics.snapshot",
+   "description": "Read the current app's static validation errors. Use `app.run` or `app.wait_run_finish` for run status and runtime exceptions, `app.run_result` for Flow outputs, `app.logs` for runtime logs, and `flow.get_variable_snapshots` for VisualFlow block inputs and outputs.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {},
+    "type": "object"
+   }
+  },
+  {
+   "name": "flow.list_variables",
+   "description": "List available variables in a VisualFlow with execution-order scope (0-based block indices). Returns name, type, kind (block_output=block output slot, block_defined=user-defined variable, flow_parameter, global_variable), block_id, defined_at, visible_from/to. Variables inside for/if/try cannot escape; variables inside programing.snippet are not statically identifiable. block_defined is deduplicated by first occurrence. Sorted by defined_at ascending, params/globals last. Static scope analysis — no runtime values. Paginated via offset/limit (default 50). CodeFlow returns empty.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "flow_id": {
+      "minLength": 1,
+      "type": "string"
+     },
+     "offset": {
+      "minimum": 0,
+      "type": "integer"
+     },
+     "limit": {
+      "maximum": 200,
+      "minimum": 1,
+      "type": "integer"
+     }
+    },
+    "required": [
+     "flow_id"
+    ],
+    "type": "object"
+   }
+  },
+  {
+   "name": "flow.blocks.list",
+   "description": "List or batch-read VisualFlow blocks by paging through them with offset/limit (0-based position window into the flow, default limit 50 for simple / 20 for detail). detail selects the shape: simple (default) returns block_index, block_id, prototype_name, plus disabled:true only for disabled blocks; detail returns the full instantiated field form per block (fields with choices/value/default, outputs) -- the same per-block shape flow.edit_blocks(insert) returns. Paginated results return total and next_offset (null when there is no next page). Rejects CodeFlow targets.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "flow_id": {
+      "minLength": 1,
+      "type": "string"
+     },
+     "detail": {
+      "description": "Optional, defaults to simple. simple: block_index/block_id/prototype_name only. detail: full fillable field form per block.",
+      "enum": [
+       "simple",
+       "detail"
+      ],
+      "type": "string"
+     },
+     "limit": {
+      "description": "Max blocks per page. Must be between 1 and 50. Defaults to 50 (simple) / 20 (detail); normally omit this field.",
+      "maximum": 50,
+      "minimum": 1,
+      "type": "integer"
+     },
+     "offset": {
+      "description": "0-based start index into the flow's block list. Defaults to 0.",
+      "minimum": 0,
+      "type": "integer"
+     }
+    },
+    "required": [
+     "flow_id"
+    ],
+    "type": "object"
+   }
+  },
+  {
+   "name": "flow.edit_blocks",
+   "description": "The only tool that inserts or removes instruction instances. Insert with blocks[{prototype_name, comment}] and block_index; comment is a required short semantic label returned with the instantiated form but is not persisted to the Studio block. The insert response includes one top-level dynamic_data_for_llm list when an inserted instruction settings UI normally loads authenticated candidates; use one candidate's coupled fill values in flow.fill_blocks. Remove with only block_ids. It never accepts block settings.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "block_ids": {
+      "description": "Required for remove.",
+      "items": {
+       "minLength": 1,
+       "type": "string"
+      },
+      "type": "array"
+     },
+     "block_index": {
+      "description": "Required for insert; -1 appends.",
+      "type": "integer"
+     },
+     "blocks": {
+      "description": "Required for insert. Exact prototype names, discovered via read knowledge/visual-blocks/block_catalog.md and knowledge/visual-blocks/block_detail.md, with execution-order semantic labels.",
+      "items": {
+       "additionalProperties": false,
+       "properties": {
+        "comment": {
+         "description": "Required short English label for this instance's role. Returned for block-id mapping and never persisted.",
+         "minLength": 1,
+         "type": "string"
+        },
+        "prototype_name": {
+         "minLength": 1,
+         "type": "string"
+        }
+       },
+       "required": [
+        "prototype_name",
+        "comment"
+       ],
+       "type": "object"
+      },
+      "type": "array"
+     },
+     "flow_id": {
+      "minLength": 1,
+      "type": "string"
+     },
+     "op": {
+      "enum": [
+       "insert",
+       "remove"
+      ],
+      "type": "string"
+     }
+    },
+    "required": [
+     "flow_id",
+     "op"
+    ],
+    "type": "object"
+   }
+  },
+  {
+   "name": "flow.fill_blocks",
+   "description": "Fill fields on existing instruction instances returned by flow.edit_blocks(insert) or flow.blocks.list(detail=detail). Put ordinary fields in fills[] with one explicit block_id item per block; duplicate block_ids are rejected. Repeated structured-form fields must use top-level group_fills[] instead of a nested group_array: fixed contains values shared by every row, while columns maps each varying field to an equal-length value array. A block may appear once in fills and in multiple group_fills for different inputs. Plain values are literals; {text:string} is an explicit text literal, useful for an empty string. Use {variable:name}, {expression:code}, {selector:name}, {array:[...]}, {object:{...}}, or {json:{...}} for other semantic values; array/object compile to real Python collections, while json compiles an object or array to literal JSON text for fields that explicitly request it. For a long multi-line value such as a code snippet, pass a plain string, not {text:string}: the wrapper is only needed to represent an explicit empty string, and the extra nesting it adds around long content has caused clients to drop a closing brace and reject the whole call as invalid JSON. For process.run, fill process first, then use only arguments.<parameter-name> fields from updated_forms; consume a child Out parameter with the exact dot-expression in updated_forms[].output_properties.process_result[].reference (not under outputs, which only holds the captured variable name). Raw inputs/outputs/package fields are rejected. It cannot insert or remove blocks. At least one of fills or group_fills must be provided (both may be provided together). Each block in the batch is applied independently: one block's failure (bad field name, missing required field, ...) never blocks the other blocks in the same call from applying. Failed blocks are reported in fill_errors[] as {block_id, code, message} -- retry only those block_ids, not the whole batch. This is separate from validation_errors[], which lists the flow's current outstanding static-check errors regardless of which call caused them.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "fills": {
+      "description": "Ordinary input/output fields grouped by block.",
+      "items": {
+       "additionalProperties": false,
+       "properties": {
+        "block_id": {
+         "minLength": 1,
+         "type": "string"
+        },
+        "inputs": {
+         "additionalProperties": true,
+         "description": "Ordinary field values: plain literal, {text:string}, {variable:string}, {expression:string}, {selector:string}, {array:[semantic values]}, {object:{name:semantic value}}, or {json:object-or-array}. Repeated structured fields belong in top-level group_fills, not here. For long multi-line strings (e.g. a snippet field's code), pass a plain string; do not wrap it in {text:string}, which only exists to represent an explicit empty string and otherwise just adds nesting that risks an unclosed brace.",
+         "type": "object"
+        },
+        "outputs": {
+         "additionalProperties": {
+          "minLength": 1,
+          "type": "string"
+         },
+         "type": "object"
+        }
+       },
+       "required": [
+        "block_id"
+       ],
+       "type": "object"
+      },
+      "type": "array"
+     },
+     "flow_id": {
+      "minLength": 1,
+      "type": "string"
+     },
+     "group_fills": {
+      "description": "Compact columnar values for repeated structured-form inputs. fixed values are copied to every row; every columns value must be a non-empty array of the same length.",
+      "items": {
+       "additionalProperties": false,
+       "properties": {
+        "block_id": {
+         "minLength": 1,
+         "type": "string"
+        },
+        "columns": {
+         "additionalProperties": {
+          "items": {},
+          "minItems": 1,
+          "type": "array"
+         },
+         "minProperties": 1,
+         "type": "object"
+        },
+        "fixed": {
+         "additionalProperties": true,
+         "description": "Structured fields shared by every generated row.",
+         "type": "object"
+        },
+        "input": {
+         "minLength": 1,
+         "type": "string"
+        }
+       },
+       "required": [
+        "block_id",
+        "input",
+        "columns"
+       ],
+       "type": "object"
+      },
+      "type": "array"
+     }
+    },
+    "required": [
+     "flow_id"
+    ],
+    "type": "object"
+   }
+  },
+  {
+   "name": "flow.get_variable_snapshots",
+   "description": "Read runtime variable snapshots for a specific VisualFlow after app.run completes. This tool is only available for VisualFlow. `flow_id` is required because the Agent cannot reliably infer Studio's current active Flow. Use this when you need block-level inputs and outputs, not aggregated diagnostics. Returns at most 100 blocks. List values are previewed with head/tail and the marker `... 省略（一共N条数据）...`.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "block_id": {
+      "description": "Optional block id. If omitted, returns up to 100 available block snapshots for the selected flow.",
+      "type": "string"
+     },
+     "flow_id": {
+      "description": "Required VisualFlow id (maps to Studio flow FileName).",
+      "minLength": 1,
+      "type": "string"
+     }
+    },
+    "required": [
+     "flow_id"
+    ],
+    "type": "object"
+   }
+  },
+  {
+   "name": "flow.list_parameters",
+   "description": "List declared parameters for one flow.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "flow_id": {
+      "minLength": 1,
+      "type": "string"
+     }
+    },
+    "required": [
+     "flow_id"
+    ],
+    "type": "object"
+   }
+  },
+  {
+   "name": "flow.toggle_blocks",
+   "description": "Enable or disable blocks via op=comment/uncomment.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "block_ids": {
+      "items": {
+       "minLength": 1,
+       "type": "string"
+      },
+      "minItems": 1,
+      "type": "array"
+     },
+     "flow_id": {
+      "minLength": 1,
+      "type": "string"
+     },
+     "op": {
+      "enum": [
+       "comment",
+       "uncomment"
+      ],
+      "type": "string"
+     }
+    },
+    "required": [
+     "flow_id",
+     "op",
+     "block_ids"
+    ],
+    "type": "object"
+   }
+  },
+  {
+   "name": "flow.write_parameters",
+   "description": "Add or remove flow parameters. Collection types use type=any; list/dict are not valid parameter types. For a computed VisualFlow Out parameter, omit value and name the producing block output exactly as the parameter.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "flow_id": {
+      "minLength": 1,
+      "type": "string"
+     },
+     "operations": {
+      "items": {
+       "additionalProperties": false,
+       "properties": {
+        "description": {
+         "type": "string"
+        },
+        "direction": {
+         "description": "Required when op=upsert.",
+         "enum": [
+          "In",
+          "Out"
+         ],
+         "type": "string"
+        },
+        "kind": {
+         "description": "Optional when type makes the choice unambiguous: int/float/bool infer Expression; str/file and any without value infer Text. Required for any with a non-empty value.",
+         "enum": [
+          "Text",
+          "Expression"
+         ],
+         "type": "string"
+        },
+        "name": {
+         "minLength": 1,
+         "type": "string"
+        },
+        "op": {
+         "enum": [
+          "upsert",
+          "remove"
+         ],
+         "type": "string"
+        },
+        "type": {
+         "description": "Required when op=upsert. Use any for list, dict, and other collection values; list/dict are not accepted parameter types.",
+         "enum": [
+          "str",
+          "file",
+          "int",
+          "bool",
+          "float",
+          "any"
+         ],
+         "type": "string"
+        },
+        "value": {
+         "description": "Optional initializer. For VisualFlow Out, this runs before all blocks; omit it for computed output and assign the result to a block output with the same name as the Out parameter.",
+         "type": "string"
+        }
+       },
+       "required": [
+        "op",
+        "name"
+       ],
+       "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+     }
+    },
+    "required": [
+     "flow_id",
+     "operations"
+    ],
+    "type": "object"
+   }
+  },
+  {
+   "name": "python_pip",
+   "description": "Manage pip packages for the current Studio app through Studio's Workspace dependency path. operation defaults to list for backward compatibility. Use install or uninstall with a packages array to change dependencies; successful mutations synchronize package.json. install optionally accepts index_url to use one HTTP(S) pip package index; when omitted, Studio's configured sources are used. Waiting for pip and executing the requested operation each have a 180-second timeout. Full stdout/stderr is written to the returned log_path. verbosity controls pip -v through -vvvv output.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "operation": {
+      "default": "list",
+      "description": "pip operation. list requires no packages; install and uninstall require packages.",
+      "enum": [
+       "list",
+       "install",
+       "uninstall"
+      ],
+      "type": "string"
+     },
+     "packages": {
+      "description": "Packages to install or uninstall. version is supported only for install.",
+      "items": {
+       "additionalProperties": false,
+       "properties": {
+        "package_name": {
+         "description": "Python distribution name, for example requests or openpyxl.",
+         "maxLength": 200,
+         "minLength": 1,
+         "type": "string"
+        },
+        "version": {
+         "description": "Optional exact version for install. Do not provide it for uninstall.",
+         "maxLength": 200,
+         "minLength": 1,
+         "type": "string"
+        }
+       },
+       "required": [
+        "package_name"
+       ],
+       "type": "object"
+      },
+      "maxItems": 50,
+      "minItems": 1,
+      "type": "array"
+     },
+     "index_url": {
+      "description": "Optional HTTP(S) pip package index URL for install only. When omitted, Studio's configured pip sources are used.",
+      "maxLength": 2048,
+      "minLength": 1,
+      "type": "string"
+     },
+     "verbosity": {
+      "default": 1,
+      "description": "pip log detail from 0 to 4, mapped to no -v through -vvvv.",
+      "maximum": 4,
+      "minimum": 0,
+      "type": "integer"
+     }
+    },
+    "type": "object"
+   }
+  },
+  {
+   "name": "wiki.list",
+   "description": "List all Studio Wiki guides and the XBot SDK index. Read returned wiki-prefixed doc_id values with wiki.read; SDK detail and Block documents are not included.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {},
+    "type": "object"
+   }
+  },
+  {
+   "name": "wiki.read",
+   "description": "Read one or more known Studio Wiki documents by wiki-prefixed doc_id in a single call. For an unknown document, call wiki.search first and then read selected doc_id values.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "doc_ids": {
+      "items": {
+       "minLength": 1,
+       "type": "string"
+      },
+      "maxItems": 50,
+      "minItems": 1,
+      "type": "array"
+     }
+    },
+    "required": [
+     "doc_ids"
+    ],
+    "type": "object"
+   }
+  },
+  {
+   "name": "selector.list",
+   "description": "List local Web selector names only when the exact name is unknown. Each selector item contains only `name`. Prefer context names. Use a unique result with selector.details; on zero or ambiguous results, ask the user—do not expand terms or scan the library. Response total is the full filtered count.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "limit": {
+      "description": "Max number of items (default 200, max 2000). Accepts a numeric string too.",
+      "type": [
+       "integer",
+       "string"
+      ]
+     },
+     "offset": {
+      "description": "0-based start index into the filtered result. Defaults to 0. Accepts a numeric string too.",
+      "minimum": 0,
+      "type": [
+       "integer",
+       "string"
+      ]
+     },
+     "query": {
+      "description": "Case-insensitive Web selector name substring only; no OR/semantics/translation.",
+      "type": "string"
+     }
+    },
+    "type": "object"
+   }
+  },
+  {
+   "name": "selector.details",
+   "description": "Return the selectors details such as `name`, `selector_type`, `url`, and `xpath` infos.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "selector_names": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 10,
+      "items": {
+       "type": "string"
+      },
+      "description": "the selector name as you known in the context. the names must from the flow | code | pseudocode. never guess its."
+     }
+    },
+    "required": [
+     "selector_names"
+    ],
+    "type": "object"
+   }
+  },
+  {
+   "name": "wiki.search",
+   "description": "Search local Studio wiki knowledge only when the exact doc_id is unknown. Never pass a known `wiki/...` doc_id here; read it directly with wiki.read. Space-separated keywords use OR by default; `|` remains an explicit OR separator. A bare Block prototype such as `excel.write_data_to_workbook` is also resolved to its Block document when available. Returns lightweight result metadata and doc_id values; read selected documents with wiki.read.",
+   "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+     "query": {
+      "description": "Keywords or a bare Block prototype. Do not pass an exact `wiki/...` doc_id; use wiki.read for it. Space-separated terms use OR by default; `|` is also an OR separator.",
+      "minLength": 1,
+      "type": "string"
+     }
+    },
+    "required": [
+     "query"
+    ],
+    "type": "object"
+   }
+  }
+ ]
+}
