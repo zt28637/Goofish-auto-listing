@@ -32,6 +32,10 @@ project/runtime/data/
 project/runtime/test/
 project/runtime/*.xlsx
 
+# DrissionPage 运行态（edge_profile 含 Cookie/密码库/历史等登录态，runs 为失败现场；均禁止入仓）
+project/modules/DrissionPage学习/edge_profile/
+project/modules/DrissionPage学习/runs/
+
 # 临时文件
 *.tmp
 *.bak

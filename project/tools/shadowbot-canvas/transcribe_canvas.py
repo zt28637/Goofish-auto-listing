@@ -23,7 +23,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import sb_mcp
 
-MOD = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "modules")
+# 本副本在 project/tools/shadowbot-canvas/ 下，须上跳两级到 project/modules（10-17 曾少跳一级落进 tools/modules/）
+MOD = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "modules")
 CATALOG = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sb_blocks_zh.json")
 
 # flow_id -> (相对 project/modules 的画布路径)。新增画布在此登记。
@@ -39,6 +40,9 @@ FLOW_MAP = {
     "process59": "2.竞品SKU数据采集/2-1B1-SKU一维数据采集.md",
     "process60": "2.竞品SKU数据采集/2-2B2-SKU二维数据采集.md",
     "process68": "工具箱/通用滚动策略.md",
+    # 项目二「电商上架自动化」应用（编辑器需停在该应用页）。⚠ 画布016/017含手机号/密码明文，
+    # mask() 不覆盖此类字段——转录落盘后必须立即手工脱敏再离开本机（原转录即手工脱敏产物）。
+    "process3": "咸鱼_批量上架.md",
 }
 # process61 测试主流程：开发期试验场，刻意不落盘（沿用旧索引约定）
 # 工具箱/通用滚动策略.md = process68（影刀组"工具箱"，1-1/2-0 等共用）
@@ -58,6 +62,16 @@ APPENDIX = {
 
 > 复核 2026-10-08（重转录后逐条对照新画布）：**四条疑点在原位置全部仍成立**（011/012/016/019/023/027 块号未变）。
 """,
+}
+
+# 敏感字段转录后自动脱敏（render_flow 内、落盘/预览前执行；仅登记流程生效，勿用于项目一）。
+# 画布块 016 手机号、017 剪贴板密码：mask() 只认 token=，覆盖不到，靠手工补会漏。
+POST_MASK = {
+    "process3": [
+        (re.compile(r"文本内容=1[3-9]\d{9}"), "文本内容=152****手机号(已脱敏)"),
+        # 值后必须留 (\s+\[机器名\]) 捕获组：整行吞会把行尾 [clipboard.set_text] 一起脱掉
+        (re.compile(r"(设置剪切板内容\s+内容源=).*?(\s+\[[\w.]+\])"), r"\g<1>***密码(已脱敏,见影刀画布017)\g<2>"),
+    ],
 }
 
 MODE_CN = {
@@ -194,6 +208,8 @@ def render_flow(fid: str, f: dict, cat: dict, now: str) -> str:
     ]
     lines = [render_block(b, cat, NOTES.get(fid, {})) for b in blocks]
     text = "\n".join(header + lines) + "\n"
+    for pat, rep in POST_MASK.get(fid, []):
+        text = pat.sub(rep, text)
     if fid in APPENDIX:
         text += APPENDIX[fid].rstrip("\n") + "\n"
     return text
