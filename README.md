@@ -94,6 +94,7 @@
 | `project/modules/咸鱼_批量上架.md` | **影刀画布 185 块全量转录**（流程真源，studio-mcp 自动转录生成，敏感字段由工具 POST_MASK 自动脱敏） |
 | `project/docs/失败模式清单.md` | 它在什么条件下会坏（触发 → 代价 → 检测 → 应对） |
 | `project/docs/优化路线图.md` | Agent 四轴（开发/运维/数据/业务）优化点与推进批次，每条带真实故障证据 |
+| `project/docs/面试速查.md` | 这套系统必须能讲清的 5 个文件、3 个故障案例、Agent 出错清单与自测题 |
 | `project/tools/shadowbot-canvas/` | 画布工具链：`sb_mcp.py`（编辑器本地 MCP 客户端）/ `extract_sb_catalog.py`（内置指令中文目录）/ `transcribe_canvas.py`（覆盖式转录）/ `sb_canvas_mcp.py`（封装为 MCP，注册见根 `.mcp.json`）/ `studio_tools.json`（编辑器 40 个 studio-mcp 工具快照，`sb_refresh_tools` 重建） |
 | `project/canvas/<flow_id>.json` | **画布结构化快照**（含每个块的填写值，已统一脱敏）。单文件 + git 历史 = 版本链：`git diff` 看改了什么，`git checkout` 拿回旧版 |
 | `project/tools/canvas_snapshot.py` | 快照导出（只读）；`--check` 比对不落盘、`--commit` 自动提交 `project/canvas/` |
