@@ -106,7 +106,9 @@
 | `project/tools/preflight.py` | **运行前体检**（只读）：凭据完整性 / Excel 锁与 Office 进程 / 写权限 / 表头列位 / 「上架中」残留 / 台账覆盖；BLOCK 时退出码 1 |
 | `project/tools/ledger.py` | **发布台账**（防重复发布）：`seed` 从「上架成功」行补齐（幂等）、`check <ID>` 查重、`list` 查看 |
 | `project/tools/log_parse.py` | **日志结构化**：影刀导出 txt → JSONL + 每件耗时汇总（兼容两种导出格式） |
-| `project/tools/tests/` | 回归用例：`python -m unittest discover -s project/tools/tests`（当前 61 条） |
+| `project/tools/reconcile.py` | **对账**：把「上架中」残留列成人工核对清单；按 `--set 行=已发布/未发布` 回填，不自动判定 |
+| `project/tools/verify.py` | **改动闸门**：一条命令跑完 快照比对 + 块数一致 + 块号引用（`--tests` 加跑单测） |
+| `project/tools/tests/` | 回归用例：`python -m unittest discover -s project/tools/tests`（当前 82 条） |
 | `project/runtime/商品清单.xlsx` | 唯一 Excel（18 列，见上表） |
 | `project/runtime/products/<ID>/` | 上架输入：`套图/`（上传源）+ `原图/`（留档） |
 | `project/conf/credentials.local.json` | 本地凭据（手机号/密码），**已 gitignore**；画布块 009–012 读取，缺失则启动报错 |

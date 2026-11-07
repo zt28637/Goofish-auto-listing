@@ -47,7 +47,9 @@ AGENTS.md · README.md · .mcp.json（注册 shadowbot-canvas MCP）
     │   ├── check_truth_source.py   # S1-2 画布/转录/快照/文档 块数一致性检查
     │   ├── check_block_refs.py     # S1-3 用折叠区域名对齐 README 分区表块号
     │   ├── log_parse.py            # S3-3 运行日志 → JSONL + 每件耗时（兼容两种导出格式）
-    │   └── tests/                  # 回归用例（unittest，61 条）
+    │   ├── reconcile.py            # S3-4 上架中对账（列清单 + 按人裁决回填）
+    │   ├── verify.py               # D2 改动闸门：一条命令跑完全部一致性检查
+    │   └── tests/                  # 回归用例（unittest，82 条）
     ├── tools/shadowbot-canvas/     # 画布转录工具链（可复用到项目一/四）
     │   ├── sb_mcp.py               # 影刀编辑器本地 studio-mcp 客户端（列流程/取块原文）
     │   ├── extract_sb_catalog.py   # 从编辑器 DLL 提取内置指令中文目录 → sb_blocks_zh.json

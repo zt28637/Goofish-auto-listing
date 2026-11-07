@@ -140,7 +140,8 @@ def check_residue(rows):
         return OK, "残留状态", "无「上架中」残留"
     return WARN, "残留状态", (
         f"{len(stuck)} 行停在上架中 {stuck} —— 崩溃残留。"
-        "先到闲鱼核对这些商品是否已发布，再改回「待上架」或「上架成功」"
+        "跑 `python project/tools/reconcile.py` 生成核对清单，"
+        "核对后按裁决回填（**不要直接改回「待上架」再重跑，可能重复发布**）"
     )
 
 
