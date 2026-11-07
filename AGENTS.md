@@ -45,7 +45,8 @@ AGENTS.md · README.md · .mcp.json（注册 shadowbot-canvas MCP）
     │   ├── ledger.py               # S3 发布台账（防重复发布）
     │   ├── canvas_snapshot.py      # S1-1 画布快照导出/比对（--check 比对、--commit 提交）
     │   ├── check_truth_source.py   # S1-2 画布/转录/快照/文档 块数一致性检查
-    │   └── tests/                  # 回归用例（unittest，47 条）
+    │   ├── log_parse.py            # S3-3 运行日志 → JSONL + 每件耗时（兼容两种导出格式）
+    │   └── tests/                  # 回归用例（unittest，61 条）
     ├── tools/shadowbot-canvas/     # 画布转录工具链（可复用到项目一/四）
     │   ├── sb_mcp.py               # 影刀编辑器本地 studio-mcp 客户端（列流程/取块原文）
     │   ├── extract_sb_catalog.py   # 从编辑器 DLL 提取内置指令中文目录 → sb_blocks_zh.json
