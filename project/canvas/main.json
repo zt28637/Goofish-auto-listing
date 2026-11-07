@@ -1,0 +1,219 @@
+{
+ "flow_id": "main",
+ "flow_name": "main",
+ "flow_kind": "visual",
+ "is_main": true,
+ "block_count": 10,
+ "captured_at": "2026-11-07 19:40:06",
+ "blocks": [
+  {
+   "block_id": "655a767f-5260-44e4-8bd6-7496f525f631",
+   "block_index": 0,
+   "prototype_name": "process.invoke_module",
+   "fields": {
+    "module": {
+     "value": "precheck"
+    },
+    "function": {
+     "value": "main"
+    },
+    "params": {
+     "value": {
+      "group_array": [
+       {
+        "kwargs": "F:\\\\Programs\\\\RPA自动化\\\\2-电商上架自动化\\\\project\\\\runtime\\\\商品清单.xlsx"
+       }
+      ]
+     }
+    },
+    "returnType": {
+     "value": "str"
+    }
+   },
+   "outputs": {
+    "invoke_result": "预检结果"
+   }
+  },
+  {
+   "block_id": "fea29d5a-b371-4b78-9d7d-e3b75b7205a4",
+   "block_index": 1,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "str"
+    },
+    "value": {
+     "value": {
+      "expression": "str(预检结果)"
+     }
+    }
+   },
+   "outputs": {
+    "variable": "预检结果"
+   }
+  },
+  {
+   "block_id": "375d8431-abd9-4dd7-91bd-de39776b61d7",
+   "block_index": 2,
+   "prototype_name": "text.extract_content_from_text",
+   "fields": {
+    "text": {
+     "value": {
+      "variable": "预检结果"
+     }
+    },
+    "extract_way": {
+     "choices": [
+      "number",
+      "mobile_phone",
+      "email",
+      "id_card",
+      "custom"
+     ],
+     "value": "custom",
+     "default": "number"
+    },
+    "regular_pattern": {
+     "value": "fail=(\\d+)"
+    },
+    "just_get_first": {
+     "value": {
+      "expression": "True"
+     }
+    },
+    "ignore_case": {
+     "value": {
+      "expression": "False"
+     }
+    }
+   },
+   "outputs": {
+    "content": "失败次数"
+   }
+  },
+  {
+   "block_id": "d99f0b55-7cba-485e-b979-9dccd4737d27",
+   "block_index": 3,
+   "prototype_name": "workflow.if",
+   "fields": {
+    "operand1": {
+     "value": {
+      "variable": "失败次数"
+     }
+    },
+    "operator": {
+     "choices": [
+      "==",
+      "!=",
+      ">",
+      ">=",
+      "<",
+      "<=",
+      "in",
+      "not in",
+      "is true",
+      "is false",
+      "empty value",
+      "not empty value",
+      "starts with",
+      "not starts with",
+      "ends with",
+      "not ends with"
+     ],
+     "value": ">",
+     "default": "=="
+    },
+    "operand2": {
+     "value": "0"
+    },
+    "operator_options": {
+     "value": "{}"
+    }
+   }
+  },
+  {
+   "block_id": "8f5052ff-086d-445b-942c-74190b64e689",
+   "block_index": 4,
+   "prototype_name": "programing.log",
+   "fields": {
+    "type": {
+     "choices": [
+      "debug",
+      "info",
+      "warning",
+      "error"
+     ],
+     "value": "info"
+    },
+    "text": {
+     "value": "预检不通过"
+    }
+   }
+  },
+  {
+   "block_id": "3d2363bc-ee44-437b-98e8-0b0b5cfe610d",
+   "block_index": 5,
+   "prototype_name": "process.return",
+   "fields": {}
+  },
+  {
+   "block_id": "06bb84f7-b293-4f22-8120-25d1ba4e9525",
+   "block_index": 6,
+   "prototype_name": "workflow.endif",
+   "fields": {}
+  },
+  {
+   "block_id": "b571c34e-b03f-4dc3-bce8-95d0b454bc90",
+   "block_index": 7,
+   "prototype_name": "process.run",
+   "fields": {
+    "process": {
+     "value": "process3"
+    }
+   },
+   "form_state": "ready",
+   "target_flow": {
+    "flow_id": "process3",
+    "flow_name": "咸鱼_批量上架",
+    "flow_kind": "visual"
+   }
+  },
+  {
+   "block_id": "c97ed23d-acfc-4f6f-b177-0f4f01464222",
+   "block_index": 8,
+   "prototype_name": "datetime.now",
+   "fields": {},
+   "outputs": {
+    "datetime_instance": "当前时间"
+   }
+  },
+  {
+   "block_id": "63f839c5-5c2a-48c4-b99d-264361512b67",
+   "block_index": 9,
+   "prototype_name": "programing.exportlog",
+   "fields": {
+    "custom_folder_path": {
+     "value": "F:\\Programs\\RPA自动化\\2-电商上架自动化\\project\\runtime\\logs"
+    },
+    "file_name": {
+     "value": {
+      "expression": "当前时间.strftime('%Y-%m-%d_%H-%M-%S')+'.txt'"
+     },
+     "default": "日志文件.txt"
+    }
+   },
+   "outputs": {
+    "file_path": "file_path"
+   }
+  }
+ ]
+}
