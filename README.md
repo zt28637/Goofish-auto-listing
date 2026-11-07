@@ -102,6 +102,7 @@
 | `project/canvas/<flow_id>.json` | **画布结构化快照**（含每个块的填写值，已统一脱敏）。单文件 + git 历史 = 版本链：`git diff` 看改了什么，`git checkout` 拿回旧版 |
 | `project/tools/canvas_snapshot.py` | 快照导出（只读）；`--check` 比对不落盘、`--commit` 自动提交 `project/canvas/` |
 | `project/tools/check_truth_source.py` | 一致性检查：画布实际块数 = 转录 `.md` = 快照 = README/AGENTS 声明；`--offline` 不连编辑器 |
+| `project/tools/check_block_refs.py` | **块号引用校验**：用「折叠区域名称」对齐 README 分区表与转录，抓出区间漂移（换数字抓不到的那种） |
 | `project/tools/preflight.py` | **运行前体检**（只读）：凭据完整性 / Excel 锁与 Office 进程 / 写权限 / 表头列位 / 「上架中」残留 / 台账覆盖；BLOCK 时退出码 1 |
 | `project/tools/ledger.py` | **发布台账**（防重复发布）：`seed` 从「上架成功」行补齐（幂等）、`check <ID>` 查重、`list` 查看 |
 | `project/tools/log_parse.py` | **日志结构化**：影刀导出 txt → JSONL + 每件耗时汇总（兼容两种导出格式） |
