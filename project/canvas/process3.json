@@ -3,8 +3,8 @@
  "flow_name": "咸鱼_批量上架",
  "flow_kind": "visual",
  "is_main": false,
- "block_count": 185,
- "captured_at": "2026-11-07 19:40:06",
+ "block_count": 192,
+ "captured_at": "2026-11-07 23:06:01",
  "blocks": [
   {
    "block_id": "d9fddb0c-cd43-4d36-965b-1d61c5db5943",
@@ -400,8 +400,39 @@
    }
   },
   {
-   "block_id": "adb73f00-50ed-48b7-b1cd-0264e61e9489",
+   "block_id": "95f180db-be00-46f4-897a-c33bea62b24a",
    "block_index": 12,
+   "prototype_name": "win32.manual_motion_on",
+   "fields": {
+    "motion_move": {
+     "value": {
+      "expression": "True"
+     }
+    },
+    "motion_click": {
+     "value": {
+      "expression": "True"
+     }
+    },
+    "motion_delay": {
+     "value": {
+      "expression": "True"
+     },
+     "default": {
+      "expression": "False"
+     }
+    },
+    "min_time": {
+     "value": "1"
+    },
+    "max_time": {
+     "value": "3"
+    }
+   }
+  },
+  {
+   "block_id": "adb73f00-50ed-48b7-b1cd-0264e61e9489",
+   "block_index": 13,
    "prototype_name": "programing.region",
    "fields": {
     "content": {
@@ -411,7 +442,7 @@
   },
   {
    "block_id": "b1188c32-74e3-4700-9127-b8bc1242e387",
-   "block_index": 13,
+   "block_index": 14,
    "prototype_name": "web.browser.wait_load_completed",
    "fields": {
     "browser": {
@@ -434,7 +465,7 @@
   },
   {
    "block_id": "0174d18c-739c-4c3e-8cbf-0d88c2cf7f78",
-   "block_index": 14,
+   "block_index": 15,
    "prototype_name": "web.browser.element_display",
    "fields": {
     "browser": {
@@ -458,7 +489,7 @@
   },
   {
    "block_id": "52ea4915-b471-44b7-89e4-d4410a2239d2",
-   "block_index": 15,
+   "block_index": 16,
    "prototype_name": "web.browser.element_display",
    "fields": {
     "browser": {
@@ -482,7 +513,7 @@
   },
   {
    "block_id": "24c60f19-a884-438e-b853-ca25f0c18cb0",
-   "block_index": 16,
+   "block_index": 17,
    "prototype_name": "web.element.click",
    "fields": {
     "browser": {
@@ -556,13 +587,13 @@
   },
   {
    "block_id": "0eb032ae-1374-429f-b5fb-2f6a254a919c",
-   "block_index": 17,
+   "block_index": 18,
    "prototype_name": "workflow.endif",
    "fields": {}
   },
   {
    "block_id": "efeb1c77-7aa8-46ba-97cd-eec797f10423",
-   "block_index": 18,
+   "block_index": 19,
    "prototype_name": "web.element.click",
    "fields": {
     "browser": {
@@ -636,7 +667,7 @@
   },
   {
    "block_id": "eee2b6b6-e83b-4295-8d45-3beaf15a453b",
-   "block_index": 19,
+   "block_index": 20,
    "prototype_name": "win32.send_keys",
    "fields": {
     "keys": {
@@ -669,7 +700,7 @@
   },
   {
    "block_id": "96f058ac-57ff-4e67-b408-e03fc2d112f1",
-   "block_index": 20,
+   "block_index": 21,
    "prototype_name": "clipboard.set_text",
    "fields": {
     "text": {
@@ -681,7 +712,7 @@
   },
   {
    "block_id": "443a9fb3-5e69-4142-81e0-5b6eebdf144c",
-   "block_index": 21,
+   "block_index": 22,
    "prototype_name": "win32.send_keys",
    "fields": {
     "keys": {
@@ -712,7 +743,7 @@
   },
   {
    "block_id": "4cded9c9-76bf-40d3-94e2-f0fa60d1be4f",
-   "block_index": 22,
+   "block_index": 23,
    "prototype_name": "web.element.click",
    "fields": {
     "browser": {
@@ -786,7 +817,7 @@
   },
   {
    "block_id": "e2d5be8c-94a6-4abc-b534-591a950278e5",
-   "block_index": 23,
+   "block_index": 24,
    "prototype_name": "web.element.click",
    "fields": {
     "browser": {
@@ -860,7 +891,7 @@
   },
   {
    "block_id": "830328a0-fd78-43c1-99b2-1a7a00464b18",
-   "block_index": 24,
+   "block_index": 25,
    "prototype_name": "programing.sleep",
    "fields": {
     "random_number": {
@@ -886,13 +917,13 @@
   },
   {
    "block_id": "78f9c7f4-8b79-466a-8b0b-ed1520e7bf49",
-   "block_index": 25,
+   "block_index": 26,
    "prototype_name": "workflow.endif",
    "fields": {}
   },
   {
    "block_id": "c29e8367-8400-4bb9-a682-debe4d48503d",
-   "block_index": 26,
+   "block_index": 27,
    "prototype_name": "web.browser.element_display",
    "fields": {
     "browser": {
@@ -916,7 +947,7 @@
   },
   {
    "block_id": "43f1f8c9-983b-4098-a98b-6af173e44cea",
-   "block_index": 27,
+   "block_index": 28,
    "prototype_name": "web.element.click",
    "fields": {
     "browser": {
@@ -992,19 +1023,19 @@
   },
   {
    "block_id": "38175647-dc0b-4e56-8e19-98f4b0ff335b",
-   "block_index": 28,
+   "block_index": 29,
    "prototype_name": "workflow.endif",
    "fields": {}
   },
   {
    "block_id": "882aa379-b6e6-465d-a104-d32436c43c22",
-   "block_index": 29,
+   "block_index": 30,
    "prototype_name": "programing.endregion",
    "fields": {}
   },
   {
    "block_id": "2c3e21cc-b87a-4f5f-bfaa-5dc948a25b80",
-   "block_index": 30,
+   "block_index": 31,
    "prototype_name": "excel.loop_data_from_workbook",
    "fields": {
     "workbook": {
@@ -1064,7 +1095,7 @@
   },
   {
    "block_id": "bdf2895d-bd2b-4fac-af2e-179a950a2e64",
-   "block_index": 31,
+   "block_index": 32,
    "prototype_name": "web.browser.element_display",
    "fields": {
     "browser": {
@@ -1089,7 +1120,7 @@
   },
   {
    "block_id": "cbdcb683-1eaa-4294-8e6a-437a77f80dd3",
-   "block_index": 32,
+   "block_index": 33,
    "prototype_name": "excel.write_data_to_workbook",
    "fields": {
     "workbook": {
@@ -1144,19 +1175,19 @@
   },
   {
    "block_id": "2cf34111-75e3-48bc-a29a-8c452b7eb74a",
-   "block_index": 33,
+   "block_index": 34,
    "prototype_name": "workflow.break",
    "fields": {}
   },
   {
    "block_id": "6c04cd69-4166-4d8b-9fc3-ac2f3e08e1c6",
-   "block_index": 34,
+   "block_index": 35,
    "prototype_name": "workflow.endif",
    "fields": {}
   },
   {
    "block_id": "bd334fd6-8421-4496-a233-19bc686865e0",
-   "block_index": 35,
+   "block_index": 36,
    "prototype_name": "programing.region",
    "fields": {
     "content": {
@@ -1166,7 +1197,7 @@
   },
   {
    "block_id": "cb1191f2-38f6-47d9-bb98-a57d223fb28b",
-   "block_index": 36,
+   "block_index": 37,
    "prototype_name": "programing.variable",
    "fields": {
     "value_type": {
@@ -1193,7 +1224,7 @@
   },
   {
    "block_id": "cf2a6046-a7a8-4edb-b85b-f4ce9fa05413",
-   "block_index": 37,
+   "block_index": 38,
    "prototype_name": "workflow.if",
    "fields": {
     "operand1": {
@@ -1233,25 +1264,25 @@
   },
   {
    "block_id": "e70647cb-2271-4a43-8be9-d4d0463687d6",
-   "block_index": 38,
+   "block_index": 39,
    "prototype_name": "workflow.continue",
    "fields": {}
   },
   {
    "block_id": "90e918ac-57c2-4818-ba70-b0eaac3d60d8",
-   "block_index": 39,
+   "block_index": 40,
    "prototype_name": "workflow.endif",
    "fields": {}
   },
   {
    "block_id": "23429974-3cff-4f66-92e5-e045d0ce9073",
-   "block_index": 40,
+   "block_index": 41,
    "prototype_name": "programing.endregion",
    "fields": {}
   },
   {
    "block_id": "0152c24c-cc27-4c91-85e2-bdd58fc8a2ad",
-   "block_index": 41,
+   "block_index": 42,
    "prototype_name": "programing.region",
    "fields": {
     "content": {
@@ -1261,7 +1292,7 @@
   },
   {
    "block_id": "47d4c912-bac4-4d00-92fb-35da1d1e0896",
-   "block_index": 42,
+   "block_index": 43,
    "prototype_name": "programing.variable",
    "fields": {
     "value_type": {
@@ -1288,7 +1319,7 @@
   },
   {
    "block_id": "56f8471f-130e-432f-b4bb-1437ced82c2e",
-   "block_index": 43,
+   "block_index": 44,
    "prototype_name": "programing.log",
    "fields": {
     "type": {
@@ -1309,7 +1340,7 @@
   },
   {
    "block_id": "c9f5b37e-dc22-4fbd-9db2-8245711fa639",
-   "block_index": 44,
+   "block_index": 45,
    "prototype_name": "dir.find_files",
    "fields": {
     "path": {
@@ -1364,7 +1395,7 @@
   },
   {
    "block_id": "2f70efd1-b0f4-4526-b9b9-9455df09c58e",
-   "block_index": 45,
+   "block_index": 46,
    "prototype_name": "workflow.forin",
    "fields": {
     "list": {
@@ -1390,7 +1421,7 @@
   },
   {
    "block_id": "e6c6c699-814c-4014-8e9c-134d9a59cb3a",
-   "block_index": 46,
+   "block_index": 47,
    "prototype_name": "programing.log",
    "fields": {
     "type": {
@@ -1411,7 +1442,7 @@
   },
   {
    "block_id": "11e7bd59-9bb5-4c39-85c4-b44b7df86ca2",
-   "block_index": 47,
+   "block_index": 48,
    "prototype_name": "web.element.upload",
    "fields": {
     "browser": {
@@ -1465,19 +1496,19 @@
   },
   {
    "block_id": "7180540a-75b8-4bce-9ede-0905cb87c168",
-   "block_index": 48,
+   "block_index": 49,
    "prototype_name": "workflow.endloop",
    "fields": {}
   },
   {
    "block_id": "93565e6a-6aa7-42fd-bcf4-0c94bc597692",
-   "block_index": 49,
+   "block_index": 50,
    "prototype_name": "programing.endregion",
    "fields": {}
   },
   {
    "block_id": "e8c2b3a8-74a1-4c3f-a94d-d72a44b5061d",
-   "block_index": 50,
+   "block_index": 51,
    "prototype_name": "programing.region",
    "fields": {
     "content": {
@@ -1487,7 +1518,7 @@
   },
   {
    "block_id": "4105d89d-eceb-473c-9d27-b17b83e8646c",
-   "block_index": 51,
+   "block_index": 52,
    "prototype_name": "web.element.click",
    "fields": {
     "browser": {
@@ -1561,7 +1592,7 @@
   },
   {
    "block_id": "38b07c66-3f03-4cf1-83f1-e54da229e9fc",
-   "block_index": 52,
+   "block_index": 53,
    "prototype_name": "programing.variable",
    "fields": {
     "value_type": {
@@ -1588,7 +1619,7 @@
   },
   {
    "block_id": "89c52e57-637b-4c00-8076-7efd6e1e162e",
-   "block_index": 53,
+   "block_index": 54,
    "prototype_name": "win32.send_keys",
    "fields": {
     "keys": {
@@ -1621,13 +1652,13 @@
   },
   {
    "block_id": "4a3c373b-e85e-4f3c-9904-be073ea22f64",
-   "block_index": 54,
+   "block_index": 55,
    "prototype_name": "programing.endregion",
    "fields": {}
   },
   {
    "block_id": "c50cab79-be2b-47be-b172-888c45a0ef54",
-   "block_index": 55,
+   "block_index": 56,
    "prototype_name": "programing.region",
    "fields": {
     "content": {
@@ -1637,7 +1668,7 @@
   },
   {
    "block_id": "6df7aac9-42be-4770-8d5b-6794578c7169",
-   "block_index": 56,
+   "block_index": 57,
    "prototype_name": "programing.variable",
    "fields": {
     "value_type": {
@@ -1664,7 +1695,7 @@
   },
   {
    "block_id": "5e533750-f3d1-4dd7-8e43-d65eea79bbb5",
-   "block_index": 57,
+   "block_index": 58,
    "prototype_name": "programing.variable",
    "fields": {
     "value_type": {
@@ -1691,7 +1722,7 @@
   },
   {
    "block_id": "ecb8006b-a4b0-4ac8-9cca-9e64ac288e79",
-   "block_index": 58,
+   "block_index": 59,
    "prototype_name": "programing.variable",
    "fields": {
     "value_type": {
@@ -1718,7 +1749,7 @@
   },
   {
    "block_id": "4abb3d03-16ce-4bdb-9935-80ca9ccfe6ac",
-   "block_index": 59,
+   "block_index": 60,
    "prototype_name": "programing.variable",
    "fields": {
     "value_type": {
@@ -1745,7 +1776,7 @@
   },
   {
    "block_id": "0ab823fe-2e0e-4337-832e-474e7c3a3a58",
-   "block_index": 60,
+   "block_index": 61,
    "prototype_name": "programing.variable",
    "fields": {
     "value_type": {
@@ -1772,7 +1803,7 @@
   },
   {
    "block_id": "3968fd11-0994-4203-b2fa-1c2a9b45078e",
-   "block_index": 61,
+   "block_index": 62,
    "prototype_name": "workflow.while",
    "fields": {
     "operand1": {
@@ -1814,7 +1845,7 @@
   },
   {
    "block_id": "3930a737-f795-4f71-bd07-f07ccc4da3ce",
-   "block_index": 62,
+   "block_index": 63,
    "prototype_name": "programing.variable",
    "fields": {
     "value_type": {
@@ -1841,7 +1872,7 @@
   },
   {
    "block_id": "4592297b-9fe6-4a8f-a20e-e594e26dac99",
-   "block_index": 63,
+   "block_index": 64,
    "prototype_name": "web.element.get_all_elements",
    "fields": {
     "browser": {
@@ -1906,7 +1937,7 @@
   },
   {
    "block_id": "74acd39c-f610-4b0b-8bb4-d92ce72228d2",
-   "block_index": 64,
+   "block_index": 65,
    "prototype_name": "workflow.if",
    "fields": {
     "operand1": {
@@ -1948,7 +1979,7 @@
   },
   {
    "block_id": "feb7cf0a-3812-4201-a996-eb95d7f0cffc",
-   "block_index": 65,
+   "block_index": 66,
    "prototype_name": "programing.variable",
    "fields": {
     "value_type": {
@@ -1975,7 +2006,7 @@
   },
   {
    "block_id": "3dcee71c-b17d-4029-b188-7a7fc4d3d900",
-   "block_index": 66,
+   "block_index": 67,
    "prototype_name": "workflow.if",
    "fields": {
     "operand1": {
@@ -2015,7 +2046,7 @@
   },
   {
    "block_id": "14063b59-4558-449e-a623-2470e7f70200",
-   "block_index": 67,
+   "block_index": 68,
    "prototype_name": "programing.log",
    "fields": {
     "type": {
@@ -2037,7 +2068,7 @@
   },
   {
    "block_id": "188f5c4f-ba70-4cfa-adfb-ebae46552d1c",
-   "block_index": 68,
+   "block_index": 69,
    "prototype_name": "programing.variable",
    "fields": {
     "value_type": {
@@ -2064,19 +2095,19 @@
   },
   {
    "block_id": "4115c188-e2a6-4a2b-939c-51ce2ffea62a",
-   "block_index": 69,
+   "block_index": 70,
    "prototype_name": "workflow.break",
    "fields": {}
   },
   {
    "block_id": "d267d0a5-3d79-4a7f-bfbe-a25e85a06557",
-   "block_index": 70,
+   "block_index": 71,
    "prototype_name": "workflow.endif",
    "fields": {}
   },
   {
    "block_id": "1190571e-7551-4548-8c58-ea80ba06bf2b",
-   "block_index": 71,
+   "block_index": 72,
    "prototype_name": "programing.sleep",
    "fields": {
     "random_number": {
@@ -2097,19 +2128,19 @@
   },
   {
    "block_id": "931d1b3c-09a8-4b3d-9863-98615c4b3c2b",
-   "block_index": 72,
+   "block_index": 73,
    "prototype_name": "workflow.continue",
    "fields": {}
   },
   {
    "block_id": "83a9c020-6088-4a2a-a660-bc0bd9be5394",
-   "block_index": 73,
+   "block_index": 74,
    "prototype_name": "workflow.endif",
    "fields": {}
   },
   {
    "block_id": "e660b602-2c9a-423c-843a-9073a014419e",
-   "block_index": 74,
+   "block_index": 75,
    "prototype_name": "programing.variable",
    "fields": {
     "value_type": {
@@ -2136,7 +2167,7 @@
   },
   {
    "block_id": "56e4e490-84cd-4fcf-a896-e12aa65b7496",
-   "block_index": 75,
+   "block_index": 76,
    "prototype_name": "web.element.get_details",
    "fields": {
     "browser": {
@@ -2188,7 +2219,7 @@
   },
   {
    "block_id": "ebaf19d8-7c99-4198-891a-15899b551696",
-   "block_index": 76,
+   "block_index": 77,
    "prototype_name": "programing.log",
    "fields": {
     "type": {
@@ -2209,7 +2240,7 @@
   },
   {
    "block_id": "6dfa5ed8-5e92-41bc-ada7-7957fecc6a0b",
-   "block_index": 77,
+   "block_index": 78,
    "prototype_name": "programing.variable",
    "fields": {
     "value_type": {
@@ -2236,7 +2267,7 @@
   },
   {
    "block_id": "4cf0b34f-10fd-4099-97a3-ea97323e0336",
-   "block_index": 78,
+   "block_index": 79,
    "prototype_name": "programing.log",
    "fields": {
     "type": {
@@ -2257,7 +2288,7 @@
   },
   {
    "block_id": "16e96fa9-ca4c-41ff-957f-a7e280c5cb02",
-   "block_index": 79,
+   "block_index": 80,
    "prototype_name": "workflow.if",
    "fields": {
     "operand1": {
@@ -2300,7 +2331,7 @@
   },
   {
    "block_id": "b8e9872a-2bb6-418f-a093-6c564e398073",
-   "block_index": 80,
+   "block_index": 81,
    "prototype_name": "programing.log",
    "fields": {
     "type": {
@@ -2321,7 +2352,7 @@
   },
   {
    "block_id": "311c16fd-9117-44fd-8c97-2eda9d26fe62",
-   "block_index": 81,
+   "block_index": 82,
    "prototype_name": "programing.variable",
    "fields": {
     "value_type": {
@@ -2348,13 +2379,13 @@
   },
   {
    "block_id": "6a261989-812f-4849-b931-8c678f302a69",
-   "block_index": 82,
+   "block_index": 83,
    "prototype_name": "workflow.else",
    "fields": {}
   },
   {
    "block_id": "180b6e0d-6245-4620-9ea6-90550c25a299",
-   "block_index": 83,
+   "block_index": 84,
    "prototype_name": "programing.variable",
    "fields": {
     "value_type": {
@@ -2381,7 +2412,7 @@
   },
   {
    "block_id": "9b7ee8eb-eced-434e-b106-faa37418c3a7",
-   "block_index": 84,
+   "block_index": 85,
    "prototype_name": "web.element.click",
    "fields": {
     "browser": {
@@ -2455,7 +2486,7 @@
   },
   {
    "block_id": "4b1250c5-b678-4d27-b261-ee9f3c7ba36f",
-   "block_index": 85,
+   "block_index": 86,
    "prototype_name": "programing.variable",
    "fields": {
     "value_type": {
@@ -2478,7 +2509,7 @@
   },
   {
    "block_id": "109574d6-625d-4280-9729-e18f2065b306",
-   "block_index": 86,
+   "block_index": 87,
    "prototype_name": "programing.variable",
    "fields": {
     "value_type": {
@@ -2505,13 +2536,13 @@
   },
   {
    "block_id": "ea8ad0c4-9fea-4369-bcea-95411f300558",
-   "block_index": 87,
+   "block_index": 88,
    "prototype_name": "programing.try",
    "fields": {}
   },
   {
    "block_id": "ccf909b1-03ce-467e-9f3b-9634e1c67ab6",
-   "block_index": 88,
+   "block_index": 89,
    "prototype_name": "web.element.get_all_elements",
    "fields": {
     "browser": {
@@ -2572,7 +2603,7 @@
   },
   {
    "block_id": "6689d6ca-d636-4b85-bb72-ee0d71dfb21a",
-   "block_index": 89,
+   "block_index": 90,
    "prototype_name": "programing.variable",
    "fields": {
     "value_type": {
@@ -2599,7 +2630,7 @@
   },
   {
    "block_id": "e49e84d4-6bcd-4d9c-8d22-ab386d369749",
-   "block_index": 90,
+   "block_index": 91,
    "prototype_name": "web.element.get_associated_elements",
    "fields": {
     "browser": {
@@ -2649,7 +2680,7 @@
   },
   {
    "block_id": "52f327a2-a21a-49c2-bdbe-16d33c543cdc",
-   "block_index": 91,
+   "block_index": 92,
    "prototype_name": "web.element.get_details",
    "fields": {
     "browser": {
@@ -2704,7 +2735,7 @@
   },
   {
    "block_id": "1e17c5b8-9fde-4cc9-bfa9-219e28ba6e84",
-   "block_index": 92,
+   "block_index": 93,
    "prototype_name": "programing.log",
    "fields": {
     "type": {
@@ -2725,7 +2756,7 @@
   },
   {
    "block_id": "51386624-a272-44eb-bc9a-95263b993b2f",
-   "block_index": 93,
+   "block_index": 94,
    "prototype_name": "programing.catch",
    "fields": {},
    "outputs": {
@@ -2734,7 +2765,7 @@
   },
   {
    "block_id": "7530549d-fbb4-4615-9a1a-4b21747f6c61",
-   "block_index": 94,
+   "block_index": 95,
    "prototype_name": "programing.variable",
    "fields": {
     "value_type": {
@@ -2757,7 +2788,7 @@
   },
   {
    "block_id": "1a97c2a7-d942-4709-a268-8fde94ed1d17",
-   "block_index": 95,
+   "block_index": 96,
    "prototype_name": "programing.log",
    "fields": {
     "type": {
@@ -2779,13 +2810,13 @@
   },
   {
    "block_id": "304d9260-0c5f-4cc0-b1e0-31a52e98c155",
-   "block_index": 96,
+   "block_index": 97,
    "prototype_name": "programing.endtry",
    "fields": {}
   },
   {
    "block_id": "6d998f11-a79b-415b-a503-34ca7e6a7846",
-   "block_index": 97,
+   "block_index": 98,
    "prototype_name": "xbot_extensions.web_action.滚动元素至可视区域",
    "fields": {
     "网页对象": {
@@ -2808,7 +2839,7 @@
   },
   {
    "block_id": "558a86a8-7789-475e-a41e-83bc8738e211",
-   "block_index": 98,
+   "block_index": 99,
    "prototype_name": "workflow.if",
    "fields": {
     "operand1": {
@@ -2849,7 +2880,7 @@
   },
   {
    "block_id": "4545cb1a-2738-4c4b-87f8-b8043b45b696",
-   "block_index": 99,
+   "block_index": 100,
    "prototype_name": "workflow.infinite_loop",
    "fields": {},
    "outputs": {
@@ -2858,7 +2889,7 @@
   },
   {
    "block_id": "3600efb5-aa12-4001-a6b3-13995c91a33a",
-   "block_index": 100,
+   "block_index": 101,
    "prototype_name": "web.element.get_associated_elements",
    "fields": {
     "browser": {
@@ -2908,7 +2939,7 @@
   },
   {
    "block_id": "5855ebb1-a8bb-4d6f-92f4-497863d4eab2",
-   "block_index": 101,
+   "block_index": 102,
    "prototype_name": "web.element.get_details",
    "fields": {
     "browser": {
@@ -2963,7 +2994,7 @@
   },
   {
    "block_id": "9828c404-87b3-4452-9f75-fe0bf996efa4",
-   "block_index": 102,
+   "block_index": 103,
    "prototype_name": "workflow.if",
    "fields": {
     "operand1": {
@@ -3004,7 +3035,7 @@
   },
   {
    "block_id": "6786277a-eb8c-428c-9ac8-d94fb1a6415d",
-   "block_index": 103,
+   "block_index": 104,
    "prototype_name": "win32.send_keys",
    "fields": {
     "keys": {
@@ -3035,25 +3066,25 @@
   },
   {
    "block_id": "70628a00-6305-4b52-bb48-36fac8a03baf",
-   "block_index": 104,
+   "block_index": 105,
    "prototype_name": "workflow.endif",
    "fields": {}
   },
   {
    "block_id": "4522c842-6118-45ad-9122-702b3a3eec0a",
-   "block_index": 105,
+   "block_index": 106,
    "prototype_name": "workflow.endloop",
    "fields": {}
   },
   {
    "block_id": "2ec62dfa-c05f-4e2f-aaf8-8f1ede843abb",
-   "block_index": 106,
+   "block_index": 107,
    "prototype_name": "workflow.endif",
    "fields": {}
   },
   {
    "block_id": "1f1bdcdd-2e01-4672-aa65-047d7048fd2f",
-   "block_index": 107,
+   "block_index": 108,
    "prototype_name": "web.element.get_all_elements",
    "fields": {
     "browser": {
@@ -3117,7 +3148,7 @@
   },
   {
    "block_id": "9f90e039-094b-42a4-8c71-716f2ef0ef3d",
-   "block_index": 108,
+   "block_index": 109,
    "prototype_name": "workflow.forin",
    "fields": {
     "list": {
@@ -3143,7 +3174,7 @@
   },
   {
    "block_id": "9f943c4c-e8d5-49d4-b656-fc468758be37",
-   "block_index": 109,
+   "block_index": 110,
    "prototype_name": "web.element.get_details",
    "fields": {
     "browser": {
@@ -3195,7 +3226,7 @@
   },
   {
    "block_id": "7e7087ba-e428-417c-a659-253844db4b53",
-   "block_index": 110,
+   "block_index": 111,
    "prototype_name": "workflow.if",
    "fields": {
     "operand1": {
@@ -3238,7 +3269,7 @@
   },
   {
    "block_id": "4cba6956-ae48-42c6-bf04-d5144e2eeee8",
-   "block_index": 111,
+   "block_index": 112,
    "prototype_name": "web.element.click",
    "fields": {
     "browser": {
@@ -3312,7 +3343,7 @@
   },
   {
    "block_id": "2d5a59d0-fc4d-47e9-baa8-176412fba5b6",
-   "block_index": 112,
+   "block_index": 113,
    "prototype_name": "programing.variable",
    "fields": {
     "value_type": {
@@ -3339,25 +3370,25 @@
   },
   {
    "block_id": "a9e8df9e-19f9-43dd-b345-6ba146591c5d",
-   "block_index": 113,
+   "block_index": 114,
    "prototype_name": "workflow.break",
    "fields": {}
   },
   {
    "block_id": "0ea82c8b-fbdf-41e0-8bea-68c15e9abe25",
-   "block_index": 114,
+   "block_index": 115,
    "prototype_name": "workflow.endif",
    "fields": {}
   },
   {
    "block_id": "0c6642dc-11db-40e3-a94f-172996f51608",
-   "block_index": 115,
+   "block_index": 116,
    "prototype_name": "workflow.endloop",
    "fields": {}
   },
   {
    "block_id": "67d8a541-c9df-450c-b74a-83862c31bd60",
-   "block_index": 116,
+   "block_index": 117,
    "prototype_name": "programing.sleep",
    "fields": {
     "random_number": {
@@ -3378,13 +3409,13 @@
   },
   {
    "block_id": "09111c12-ecbc-4604-a4c3-67ac0799c9f6",
-   "block_index": 117,
+   "block_index": 118,
    "prototype_name": "workflow.endif",
    "fields": {}
   },
   {
    "block_id": "6b1672c6-27b6-4148-ac70-74f4f0979cc3",
-   "block_index": 118,
+   "block_index": 119,
    "prototype_name": "workflow.if",
    "fields": {
     "operand1": {
@@ -3425,7 +3456,7 @@
   },
   {
    "block_id": "9b58b1e7-3513-440e-8cd5-9fef4b1d58fc",
-   "block_index": 119,
+   "block_index": 120,
    "prototype_name": "programing.log",
    "fields": {
     "type": {
@@ -3447,7 +3478,7 @@
   },
   {
    "block_id": "902b6995-17aa-4e9e-9c0f-e9fdb8c8b8d3",
-   "block_index": 120,
+   "block_index": 121,
    "prototype_name": "programing.variable",
    "fields": {
     "value_type": {
@@ -3474,25 +3505,25 @@
   },
   {
    "block_id": "31f5c048-0082-486f-8413-efed61b22ab2",
-   "block_index": 121,
+   "block_index": 122,
    "prototype_name": "workflow.break",
    "fields": {}
   },
   {
    "block_id": "51fcd507-1252-4d85-8636-48f6f96cc3c5",
-   "block_index": 122,
+   "block_index": 123,
    "prototype_name": "workflow.endif",
    "fields": {}
   },
   {
    "block_id": "f5b81914-7c32-4994-b156-1b92630a674e",
-   "block_index": 123,
+   "block_index": 124,
    "prototype_name": "workflow.endloop",
    "fields": {}
   },
   {
    "block_id": "dbfe49ed-2d3e-41ba-ace9-6f6a4e946b42",
-   "block_index": 124,
+   "block_index": 125,
    "prototype_name": "workflow.if",
    "fields": {
     "operand1": {
@@ -3530,7 +3561,7 @@
   },
   {
    "block_id": "47afb5f6-99ee-4e4b-932b-574566b48227",
-   "block_index": 125,
+   "block_index": 126,
    "prototype_name": "programing.variable",
    "fields": {
     "value_type": {
@@ -3557,7 +3588,7 @@
   },
   {
    "block_id": "2c97ccd3-e474-4c3d-9642-b1da4acc3d4d",
-   "block_index": 126,
+   "block_index": 127,
    "prototype_name": "excel.write_data_to_workbook",
    "fields": {
     "workbook": {
@@ -3611,25 +3642,25 @@
   },
   {
    "block_id": "7c96b207-153d-4bb3-9d33-857919b0b4c0",
-   "block_index": 127,
+   "block_index": 128,
    "prototype_name": "workflow.continue",
    "fields": {}
   },
   {
    "block_id": "b7365861-f9e2-4956-82d6-2f06d597a2e3",
-   "block_index": 128,
+   "block_index": 129,
    "prototype_name": "workflow.endif",
    "fields": {}
   },
   {
    "block_id": "0d252a7d-177d-4a7a-a439-b406ffdc0594",
-   "block_index": 129,
+   "block_index": 130,
    "prototype_name": "programing.endregion",
    "fields": {}
   },
   {
    "block_id": "5d0065ad-0cb5-454b-8162-517bbd1bd565",
-   "block_index": 130,
+   "block_index": 131,
    "prototype_name": "programing.region",
    "fields": {
     "content": {
@@ -3639,7 +3670,7 @@
   },
   {
    "block_id": "71b8298d-35c7-44a1-be63-632bbd4b2865",
-   "block_index": 131,
+   "block_index": 132,
    "prototype_name": "xbot_extensions.web_action.滚动元素至可视区域",
    "fields": {
     "网页对象": {
@@ -3662,7 +3693,7 @@
   },
   {
    "block_id": "44ec0fd4-bdc7-49d3-9d49-cb00a264e896",
-   "block_index": 132,
+   "block_index": 133,
    "prototype_name": "web.element.click",
    "fields": {
     "browser": {
@@ -3736,7 +3767,7 @@
   },
   {
    "block_id": "dcaffb1f-75bd-4823-92ff-cc98aa1bbc1a",
-   "block_index": 133,
+   "block_index": 134,
    "prototype_name": "win32.send_keys",
    "fields": {
     "keys": {
@@ -3769,7 +3800,7 @@
   },
   {
    "block_id": "7cff413c-958b-4758-99fe-5c6fef5fa80f",
-   "block_index": 134,
+   "block_index": 135,
    "prototype_name": "web.element.click",
    "fields": {
     "browser": {
@@ -3843,7 +3874,7 @@
   },
   {
    "block_id": "c3d87fbe-f9d7-41e9-8a96-69b9f4c7371a",
-   "block_index": 135,
+   "block_index": 136,
    "prototype_name": "win32.send_keys",
    "fields": {
     "keys": {
@@ -3876,13 +3907,13 @@
   },
   {
    "block_id": "f68f92f9-40ed-480f-b1fa-36fc894b0935",
-   "block_index": 136,
+   "block_index": 137,
    "prototype_name": "programing.endregion",
    "fields": {}
   },
   {
    "block_id": "79a194ce-918f-443a-bdff-171bbdfa6c15",
-   "block_index": 137,
+   "block_index": 138,
    "prototype_name": "programing.region",
    "fields": {
     "content": {
@@ -3892,7 +3923,7 @@
   },
   {
    "block_id": "2bf0a565-e614-4ca0-bc27-5cf8785fc2b5",
-   "block_index": 138,
+   "block_index": 139,
    "prototype_name": "programing.variable",
    "fields": {
     "value_type": {
@@ -3919,7 +3950,7 @@
   },
   {
    "block_id": "268f4866-1e85-4170-a340-4cf1c0f3d91e",
-   "block_index": 139,
+   "block_index": 140,
    "prototype_name": "workflow.if",
    "fields": {
     "operand1": {
@@ -3960,7 +3991,7 @@
   },
   {
    "block_id": "7b492414-39ab-486b-9b0d-571217155d92",
-   "block_index": 140,
+   "block_index": 141,
    "prototype_name": "web.element.click",
    "fields": {
     "browser": {
@@ -4034,7 +4065,7 @@
   },
   {
    "block_id": "856f733e-70ea-4c08-a27c-c4cfe54ccb26",
-   "block_index": 141,
+   "block_index": 142,
    "prototype_name": "workflow.elseif",
    "fields": {
     "operand1": {
@@ -4075,7 +4106,7 @@
   },
   {
    "block_id": "f9f0291d-86fb-4fa4-884f-d0757eb11408",
-   "block_index": 142,
+   "block_index": 143,
    "prototype_name": "web.element.click",
    "fields": {
     "browser": {
@@ -4149,7 +4180,7 @@
   },
   {
    "block_id": "50dd3a80-69fa-4bfa-979a-3649ce1a6e9b",
-   "block_index": 143,
+   "block_index": 144,
    "prototype_name": "workflow.elseif",
    "fields": {
     "operand1": {
@@ -4190,7 +4221,7 @@
   },
   {
    "block_id": "4c8fca2a-ac0c-4c41-8633-f08b5a4bbe87",
-   "block_index": 144,
+   "block_index": 145,
    "prototype_name": "web.element.click",
    "fields": {
     "browser": {
@@ -4264,13 +4295,13 @@
   },
   {
    "block_id": "a258f812-be5c-4e1f-a630-cda12ae22b63",
-   "block_index": 145,
+   "block_index": 146,
    "prototype_name": "workflow.else",
    "fields": {}
   },
   {
    "block_id": "01f6a1e0-9c9a-4caf-8535-d7c7d1a6a08e",
-   "block_index": 146,
+   "block_index": 147,
    "prototype_name": "web.element.click",
    "fields": {
     "browser": {
@@ -4344,13 +4375,13 @@
   },
   {
    "block_id": "8b758dcd-5f84-4556-b8cd-9d378e7b994f",
-   "block_index": 147,
+   "block_index": 148,
    "prototype_name": "workflow.endif",
    "fields": {}
   },
   {
    "block_id": "430bff82-be4b-4e3d-8c94-3f60330dd6b7",
-   "block_index": 148,
+   "block_index": 149,
    "prototype_name": "workflow.if",
    "fields": {
     "operand1": {
@@ -4391,7 +4422,7 @@
   },
   {
    "block_id": "a0cf7f25-a492-426d-8bcc-1792ea0c07e4",
-   "block_index": 149,
+   "block_index": 150,
    "prototype_name": "web.element.click",
    "fields": {
     "browser": {
@@ -4465,19 +4496,19 @@
   },
   {
    "block_id": "8dfd992c-f68b-4407-bfc8-6781d09187f5",
-   "block_index": 150,
+   "block_index": 151,
    "prototype_name": "workflow.endif",
    "fields": {}
   },
   {
    "block_id": "5fb924ea-50b7-4c87-ad6c-c3c6e38031c9",
-   "block_index": 151,
+   "block_index": 152,
    "prototype_name": "programing.endregion",
    "fields": {}
   },
   {
    "block_id": "d165ac2e-0d8f-443d-82d6-076f5788353e",
-   "block_index": 152,
+   "block_index": 153,
    "prototype_name": "programing.comment",
    "fields": {
     "content": {
@@ -4487,7 +4518,7 @@
   },
   {
    "block_id": "ddef8202-3a13-4b4e-bf3a-b8e48a426ff7",
-   "block_index": 153,
+   "block_index": 154,
    "prototype_name": "programing.region",
    "fields": {
     "content": {
@@ -4496,8 +4527,29 @@
    }
   },
   {
+   "block_id": "4b4bf5c8-3cc1-4730-b8c6-b3edd52305a4",
+   "block_index": 155,
+   "prototype_name": "programing.log",
+   "fields": {
+    "type": {
+     "choices": [
+      "debug",
+      "info",
+      "warning",
+      "error"
+     ],
+     "value": "info"
+    },
+    "text": {
+     "value": {
+      "expression": "f\"PUBLISH|begin|pid={loop_excel[0]}\""
+     }
+    }
+   }
+  },
+  {
    "block_id": "628e1ef4-e854-4b22-9e56-14c374582804",
-   "block_index": 154,
+   "block_index": 156,
    "prototype_name": "excel.write_data_to_workbook",
    "fields": {
     "workbook": {
@@ -4552,7 +4604,7 @@
   },
   {
    "block_id": "705c3774-c149-4b1c-8d23-9331ed27e2e5",
-   "block_index": 155,
+   "block_index": 157,
    "prototype_name": "excel.save",
    "fields": {
     "excel_instance": {
@@ -4581,8 +4633,29 @@
    }
   },
   {
+   "block_id": "a9533901-1a1c-46dc-8898-5b2f9708e591",
+   "block_index": 158,
+   "prototype_name": "programing.log",
+   "fields": {
+    "type": {
+     "choices": [
+      "debug",
+      "info",
+      "warning",
+      "error"
+     ],
+     "value": "info"
+    },
+    "text": {
+     "value": {
+      "expression": "f\"PUBLISH|click|pid={loop_excel[0]}\""
+     }
+    }
+   }
+  },
+  {
    "block_id": "6bee3643-ddc8-4af7-b63e-c5c26a36711e",
-   "block_index": 156,
+   "block_index": 159,
    "prototype_name": "web.element.click",
    "fields": {
     "browser": {
@@ -4656,7 +4729,7 @@
   },
   {
    "block_id": "ee213f7b-f388-4b22-9548-301e4edf1296",
-   "block_index": 157,
+   "block_index": 160,
    "prototype_name": "web.browser.wait_load_completed",
    "fields": {
     "browser": {
@@ -4679,7 +4752,7 @@
   },
   {
    "block_id": "334a5ff8-bf7a-4932-a1d4-22772abaf896",
-   "block_index": 158,
+   "block_index": 161,
    "prototype_name": "programing.sleep",
    "fields": {
     "random_number": {
@@ -4701,13 +4774,13 @@
   },
   {
    "block_id": "ecbc997f-2961-4e47-831b-6ad86727392d",
-   "block_index": 159,
+   "block_index": 162,
    "prototype_name": "programing.endregion",
    "fields": {}
   },
   {
    "block_id": "57e1501b-b94a-46e4-8a70-ac504e3d1305",
-   "block_index": 160,
+   "block_index": 163,
    "prototype_name": "programing.region",
    "fields": {
     "content": {
@@ -4717,7 +4790,7 @@
   },
   {
    "block_id": "b831ba1f-0b54-4091-9689-7ad7a6b8bf25",
-   "block_index": 161,
+   "block_index": 164,
    "prototype_name": "web.browser.contains_element_or_text",
    "fields": {
     "browser": {
@@ -4744,7 +4817,7 @@
   },
   {
    "block_id": "0ca5b46a-b427-47b2-a1a1-ba8f1307b000",
-   "block_index": 162,
+   "block_index": 165,
    "prototype_name": "programing.variable",
    "fields": {
     "value_type": {
@@ -4768,8 +4841,29 @@
    }
   },
   {
+   "block_id": "6f2ee5d8-f3ae-474b-9bc2-e1137cb3fa91",
+   "block_index": 166,
+   "prototype_name": "programing.log",
+   "fields": {
+    "type": {
+     "choices": [
+      "debug",
+      "info",
+      "warning",
+      "error"
+     ],
+     "value": "info"
+    },
+    "text": {
+     "value": {
+      "expression": "f\"PUBLISH|verdict|pid={loop_excel[0]}|result=success\""
+     }
+    }
+   }
+  },
+  {
    "block_id": "53131ca4-7a9a-4bae-926a-a8e9ed9d4f6e",
-   "block_index": 163,
+   "block_index": 167,
    "prototype_name": "excel.write_data_to_workbook",
    "fields": {
     "workbook": {
@@ -4824,7 +4918,7 @@
   },
   {
    "block_id": "1c38952d-3cb2-48ad-ac45-b342e29620a3",
-   "block_index": 164,
+   "block_index": 168,
    "prototype_name": "programing.variable",
    "fields": {
     "value_type": {
@@ -4851,13 +4945,13 @@
   },
   {
    "block_id": "f59043eb-6163-45e2-8898-86c8ae00f08f",
-   "block_index": 165,
+   "block_index": 169,
    "prototype_name": "workflow.else",
    "fields": {}
   },
   {
    "block_id": "7972a79f-85d7-49c6-b82b-f56709e23eb4",
-   "block_index": 166,
+   "block_index": 170,
    "prototype_name": "web.browser.element_display",
    "fields": {
     "browser": {
@@ -4881,7 +4975,7 @@
   },
   {
    "block_id": "0147b33e-3d29-420a-abb3-48b308d7c81a",
-   "block_index": 167,
+   "block_index": 171,
    "prototype_name": "programing.variable",
    "fields": {
     "value_type": {
@@ -4905,8 +4999,29 @@
    }
   },
   {
+   "block_id": "ad925f95-1dfa-4866-8254-79f91cd90852",
+   "block_index": 172,
+   "prototype_name": "programing.log",
+   "fields": {
+    "type": {
+     "choices": [
+      "debug",
+      "info",
+      "warning",
+      "error"
+     ],
+     "value": "info"
+    },
+    "text": {
+     "value": {
+      "expression": "f\"PUBLISH|verdict|pid={loop_excel[0]}|result=failed\""
+     }
+    }
+   }
+  },
+  {
    "block_id": "4f3e0f5d-5edf-4908-95bf-31d73f74b8ab",
-   "block_index": 168,
+   "block_index": 173,
    "prototype_name": "web.element.click",
    "fields": {
     "browser": {
@@ -4980,7 +5095,7 @@
   },
   {
    "block_id": "8cd6af12-fe73-4cfd-a592-0b825f6f9994",
-   "block_index": 169,
+   "block_index": 174,
    "prototype_name": "excel.write_data_to_workbook",
    "fields": {
     "workbook": {
@@ -5035,7 +5150,7 @@
   },
   {
    "block_id": "8adb9374-7969-4547-b8bf-796df674b737",
-   "block_index": 170,
+   "block_index": 175,
    "prototype_name": "programing.variable",
    "fields": {
     "value_type": {
@@ -5062,13 +5177,13 @@
   },
   {
    "block_id": "323ece56-6f6d-40df-8c3a-3389c1b3f2f9",
-   "block_index": 171,
+   "block_index": 176,
    "prototype_name": "workflow.else",
    "fields": {}
   },
   {
    "block_id": "c465b43d-09fe-4cbe-98c1-4c6693a40ea3",
-   "block_index": 172,
+   "block_index": 177,
    "prototype_name": "programing.log",
    "fields": {
     "type": {
@@ -5086,8 +5201,30 @@
    }
   },
   {
+   "block_id": "ff47f974-9452-4719-8fe0-5bcf564538d1",
+   "block_index": 178,
+   "prototype_name": "programing.log",
+   "fields": {
+    "type": {
+     "choices": [
+      "debug",
+      "info",
+      "warning",
+      "error"
+     ],
+     "value": "warning",
+     "default": "info"
+    },
+    "text": {
+     "value": {
+      "expression": "f\"PUBLISH|verdict|pid={loop_excel[0]}|result=unknown\""
+     }
+    }
+   }
+  },
+  {
    "block_id": "aac0de2c-dad3-4efc-ad65-76defbdee4e9",
-   "block_index": 173,
+   "block_index": 179,
    "prototype_name": "excel.write_data_to_workbook",
    "fields": {
     "workbook": {
@@ -5142,7 +5279,7 @@
   },
   {
    "block_id": "6d91efd8-82c7-44c4-b451-d1db084ba10d",
-   "block_index": 174,
+   "block_index": 180,
    "prototype_name": "programing.variable",
    "fields": {
     "value_type": {
@@ -5169,25 +5306,25 @@
   },
   {
    "block_id": "a87e0abd-9173-4e42-80d8-ca973adc0602",
-   "block_index": 175,
+   "block_index": 181,
    "prototype_name": "workflow.endif",
    "fields": {}
   },
   {
    "block_id": "90aa513b-db3f-4a21-bd07-cb9c05770927",
-   "block_index": 176,
+   "block_index": 182,
    "prototype_name": "workflow.endif",
    "fields": {}
   },
   {
    "block_id": "9adb76f1-7107-4213-80c5-65320411efb0",
-   "block_index": 177,
+   "block_index": 183,
    "prototype_name": "programing.endregion",
    "fields": {}
   },
   {
    "block_id": "8fd3e895-176f-4732-b2ab-2971f835d3ef",
-   "block_index": 178,
+   "block_index": 184,
    "prototype_name": "excel.save",
    "fields": {
     "excel_instance": {
@@ -5217,7 +5354,7 @@
   },
   {
    "block_id": "cd30f57c-44a4-4ab5-a0d1-9c235a8668bf",
-   "block_index": 179,
+   "block_index": 185,
    "prototype_name": "web.browser.navigate",
    "fields": {
     "browser": {
@@ -5249,13 +5386,19 @@
   },
   {
    "block_id": "35f54646-1c4a-4448-8eb4-4c5c2521f9a4",
-   "block_index": 180,
+   "block_index": 186,
    "prototype_name": "workflow.endloop",
    "fields": {}
   },
   {
+   "block_id": "c834449b-7b68-4738-80aa-af7f65b12b1f",
+   "block_index": 187,
+   "prototype_name": "win32.manual_motion_off",
+   "fields": {}
+  },
+  {
    "block_id": "d5d6a389-bb8b-47fc-9a1c-df22698ff324",
-   "block_index": 181,
+   "block_index": 188,
    "prototype_name": "excel.close",
    "fields": {
     "operation": {
@@ -5300,7 +5443,7 @@
   },
   {
    "block_id": "d655ebeb-415f-4875-a75c-07fc40eab769",
-   "block_index": 182,
+   "block_index": 189,
    "prototype_name": "programing.log",
    "fields": {
     "type": {
@@ -5321,7 +5464,7 @@
   },
   {
    "block_id": "465fcc3d-dae4-4a42-87e0-cb8f670e465e",
-   "block_index": 183,
+   "block_index": 190,
    "prototype_name": "programing.log",
    "fields": {
     "type": {
@@ -5343,7 +5486,7 @@
   },
   {
    "block_id": "0c5a4c00-aa17-4f43-8d9c-08a612b67fd6",
-   "block_index": 184,
+   "block_index": 191,
    "prototype_name": "programing.log",
    "fields": {
     "type": {

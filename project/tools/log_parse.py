@@ -45,6 +45,9 @@ SUMMARY_RE = re.compile(r"^SUMMARY\s+total=(?P<total>\d+)\s+pass=(?P<pass>\d+)\s
 COUNT_RE = re.compile(r"^(上架成功数量|上架失败数量|上架不明情况数量)[：:]\s*(?P<n>\d+)")
 PID_RE = re.compile(r"products[\\/](?P<pid>[^\\/]+)[\\/]套图")
 STEP_RE = re.compile(r"^第(?P<level>\d+)级已正确")
+# 发布段结构化标记（画布块 155/158/166/172/178）：
+#   PUBLISH|begin|pid=P003 · PUBLISH|click|pid=P003 · PUBLISH|verdict|pid=P003|result=success
+PUBLISH_RE = re.compile(r"^PUBLISH\|(?P<event>begin|click|verdict)\|pid=(?P<pid>[^|]*)(?:\|result=(?P<result>\w+))?")
 
 KIND_COUNT = {
     "上架成功数量": "count_success",
@@ -75,6 +78,12 @@ def classify(msg: str, level: str) -> dict:
     m = STEP_RE.match(msg)
     if m:
         return {"kind": "category_step", "level": int(m["level"])}
+    m = PUBLISH_RE.match(msg)
+    if m:
+        ev = {"kind": f"publish_{m['event']}", "pid": m["pid"]}
+        if m["result"]:
+            ev["result"] = m["result"]
+        return ev
     if _is_bare_path(msg):
         pid = PID_RE.search(msg)
         if pid and msg.rstrip().rstrip("\\/").endswith("套图"):
@@ -132,6 +141,8 @@ def build_summary(events, run, bad=0) -> dict:
         nxt = starts[n + 1] if n + 1 < len(starts) else ends_at
         seg = events[i:nxt]
         end_ev = events[nxt] if nxt < len(events) else events[-1]
+        clicked = any(e["kind"] == "publish_click" for e in seg)
+        verdict = next((e.get("result") for e in seg if e["kind"] == "publish_verdict"), None)
         s["rows"].append({
             "pid": events[i]["pid"],
             "start": events[i]["ts"],
@@ -139,6 +150,11 @@ def build_summary(events, run, bad=0) -> dict:
             "events": len(seg),
             "files": sum(1 for e in seg if e["kind"] == "upload_file"),
             "category_steps": sum(1 for e in seg if e["kind"] == "category_step"),
+            "publish_clicked": clicked,
+            "verdict": verdict,
+            # 崩溃后可判定性：没点过 = 确定没发；点了没判决 = 未知；有判决 = 已知
+            "certainty": ("unknown" if clicked and not verdict
+                          else ("not_published" if not clicked else verdict)),
         })
     return s
 

@@ -111,5 +111,48 @@ class TestSummary(unittest.TestCase):
         self.assertAlmostEqual(self.summary["duration_s"], 38.1, places=1)
 
 
+class TestPublishMarkers(unittest.TestCase):
+    """发布段结构化日志（O2b）：崩溃后能判「确定没发」还是「结果未知」。"""
+
+    def test_classify_begin_click_verdict(self):
+        self.assertEqual(log_parse.classify("PUBLISH|begin|pid=P003", "信息")["kind"], "publish_begin")
+        self.assertEqual(log_parse.classify("PUBLISH|click|pid=P003", "信息")["kind"], "publish_click")
+        ev = log_parse.classify("PUBLISH|verdict|pid=P003|result=success", "信息")
+        self.assertEqual((ev["kind"], ev["result"]), ("publish_verdict", "success"))
+
+    def _summary(self, lines):
+        body = "\n".join(f"[信息] [2026-11-07 10:49:{15 + i:02d}.000] {ln}" for i, ln in enumerate(lines))
+        events, summary = log_parse.parse_file(write(f"pub{len(lines)}{lines[-1][:6]}.txt", body))
+        return summary["rows"][0]
+
+    def test_not_published_when_no_click(self):
+        row = self._summary([
+            r"F:\p\products\P003\套图",
+            r"F:\p\products\P003\套图\01.jpg",
+            "PUBLISH|begin|pid=P003",
+        ])
+        self.assertFalse(row["publish_clicked"])
+        self.assertEqual(row["certainty"], "not_published")
+
+    def test_unknown_when_clicked_without_verdict(self):
+        row = self._summary([
+            r"F:\p\products\P003\套图",
+            "PUBLISH|begin|pid=P003",
+            "PUBLISH|click|pid=P003",
+            "执行中断",
+        ])
+        self.assertTrue(row["publish_clicked"])
+        self.assertIsNone(row["verdict"])
+        self.assertEqual(row["certainty"], "unknown")
+
+    def test_known_when_verdict_present(self):
+        row = self._summary([
+            r"F:\p\products\P003\套图",
+            "PUBLISH|click|pid=P003",
+            "PUBLISH|verdict|pid=P003|result=success",
+        ])
+        self.assertEqual(row["certainty"], "success")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

@@ -1,5 +1,5 @@
 # main  (flow_id=main, 组=—, 块数=10)
-# 转录时间 2026-11-07 10:48 · 来源 studio-mcp flow.blocks.list(detail) · 编号=画布块序号+1
+# 转录时间 2026-11-07 23:04 · 来源 studio-mcp flow.blocks.list(detail) · 编号=画布块序号+1
 # 指令名/参数名=影刀官方内置指令目录（见 tools/sb_blocks_zh.json）· 行尾[英文ID]=机器名，可 grep
 
 001  调用模块  模块名称=precheck  方法名称=main  方法参数列表=group_array=[kwargs=F:\\Programs\\RPA自动化\\2-电商上架自动化\\project\\runtime\\商品清单.xlsx]  返回值类型=str  [process.invoke_module]
