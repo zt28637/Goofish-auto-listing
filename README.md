@@ -1,9 +1,9 @@
 # 闲鱼批量上架自动化
 
 > **影刀 RPA 上架执行引擎**：循环 `商品清单.xlsx`，把套图 + 文案真实上架到闲鱼网页版（goofish.com）。
-> 流程 = 影刀 `process3「咸鱼_批量上架」`（**157 块**画布，2026-11-07 10:01 全量转录；含登录态复检、`上架中` 状态与每件落盘、**凭据外置**）。套图与文案由**上游产出（不在本仓范围）**，本仓只做**预检 + 上架**。
+> 流程 = 影刀 `process3「咸鱼_批量上架」`（**185 块**画布，2026-11-07 10:52 全量转录；含登录态复检、`上架中` 状态与每件落盘、**凭据外置**、分类级联兜底）。套图与文案由**上游产出（不在本仓范围）**，本仓只做**预检 + 上架**。
 >
-> **两段式**：L0 `project/tools/precheck.py`（四项必填校验，`fail>0` 整批中止，引擎无关）→ L1 上架画布。脏数据挡在真实发布之前。
+> **两段式**：L0 `project/tools/precheck.py`（分级校验：`fail` 整批中止 / `warn` 只提示，引擎无关）→ L1 上架画布。脏数据挡在真实发布之前。
 
 ---
 
@@ -91,8 +91,13 @@
 
 | 文件 | 作用 |
 |------|------|
-| `project/modules/咸鱼_批量上架.md` | **影刀画布 157 块全量转录**（流程真源，studio-mcp 自动转录生成，敏感字段由工具 POST_MASK 自动脱敏） |
+| `project/modules/咸鱼_批量上架.md` | **影刀画布 185 块全量转录**（流程真源，studio-mcp 自动转录生成，敏感字段由工具 POST_MASK 自动脱敏） |
+| `project/docs/失败模式清单.md` | 它在什么条件下会坏（触发 → 代价 → 检测 → 应对） |
+| `project/docs/优化路线图.md` | Agent 四轴（开发/运维/数据/业务）优化点与推进批次，每条带真实故障证据 |
 | `project/tools/shadowbot-canvas/` | 画布工具链：`sb_mcp.py`（编辑器本地 MCP 客户端）/ `extract_sb_catalog.py`（内置指令中文目录）/ `transcribe_canvas.py`（覆盖式转录）/ `sb_canvas_mcp.py`（封装为 MCP，注册见根 `.mcp.json`）/ `studio_tools.json`（编辑器 40 个 studio-mcp 工具快照，`sb_refresh_tools` 重建） |
+| `project/canvas/<flow_id>.json` | **画布结构化快照**（含每个块的填写值，已统一脱敏）。单文件 + git 历史 = 版本链：`git diff` 看改了什么，`git checkout` 拿回旧版 |
+| `project/tools/canvas_snapshot.py` | 快照导出（只读）；`--check` 比对不落盘、`--commit` 自动提交 `project/canvas/` |
+| `project/tools/check_truth_source.py` | 一致性检查：画布实际块数 = 转录 `.md` = 快照 = README/AGENTS 声明；`--offline` 不连编辑器 |
 | `project/runtime/商品清单.xlsx` | 唯一 Excel（18 列，见上表） |
 | `project/runtime/products/<ID>/` | 上架输入：`套图/`（上传源）+ `原图/`（留档） |
 | `project/conf/credentials.local.json` | 本地凭据（手机号/密码），**已 gitignore**；画布块 009–012 读取，缺失则启动报错 |
