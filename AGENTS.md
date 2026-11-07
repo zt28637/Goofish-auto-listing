@@ -40,8 +40,12 @@ AGENTS.md · README.md · .mcp.json（注册 shadowbot-canvas MCP）
     │   └── 优化路线图.md            # Agent 四轴优化点 + 推进批次（每条带真实故障证据）
     ├── canvas/                     # 画布结构化快照（<flow_id>.json，含填写值，已脱敏；随仓库提交）
     ├── tools/
+    │   ├── precheck.py             # L0 预检（fail/warn 两级，引擎无关）
+    │   ├── preflight.py            # S3 运行前体检（只读；BLOCK → 不要启动）
+    │   ├── ledger.py               # S3 发布台账（防重复发布）
     │   ├── canvas_snapshot.py      # S1-1 画布快照导出/比对（--check 比对、--commit 提交）
-    │   └── check_truth_source.py   # S1-2 画布/转录/快照/文档 块数一致性检查
+    │   ├── check_truth_source.py   # S1-2 画布/转录/快照/文档 块数一致性检查
+    │   └── tests/                  # 回归用例（unittest，47 条）
     ├── tools/shadowbot-canvas/     # 画布转录工具链（可复用到项目一/四）
     │   ├── sb_mcp.py               # 影刀编辑器本地 studio-mcp 客户端（列流程/取块原文）
     │   ├── extract_sb_catalog.py   # 从编辑器 DLL 提取内置指令中文目录 → sb_blocks_zh.json
