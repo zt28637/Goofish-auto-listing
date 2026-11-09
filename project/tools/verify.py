@@ -9,6 +9,7 @@
   2. 三处块数一致   check_truth_source.py            （画布 = 转录 = 快照 = 文档）
   3. 块号引用一致   check_block_refs.py              （README 分区表 vs 折叠区域，按名字对）
   4. 回归测试       unittest discover（加 --tests 才跑，默认跳过以保持秒级）
+  5. 节点测试       project/modules/测试（上架步骤级纯离线用例）
 
 退出码: 0=全过（含 SKIP）· 1=有失败 · 2=检查脚本本身不存在
 """
@@ -21,6 +22,11 @@ from pathlib import Path
 
 TOOLS = Path(__file__).resolve().parent
 ROOT = TOOLS.parents[1]
+
+TEST_SUITES = [
+    ("回归测试", TOOLS / "tests"),
+    ("节点测试", ROOT / "project" / "modules" / "测试"),
+]
 
 STEPS = [
     ("画布快照比对", [str(TOOLS / "canvas_snapshot.py"), "--check"], "editor"),
@@ -63,9 +69,13 @@ def main() -> int:
         results.append((name, "PASS" if rc == 0 else "FAIL", "", out))
 
     if a.tests:
-        rc, out = run(["-m", "unittest", "discover", "-s", str(TOOLS / "tests")])
-        summary = [ln for ln in out.splitlines() if ln.startswith(("Ran ", "OK", "FAILED"))]
-        results.append(("回归测试", "PASS" if rc == 0 else "FAIL", " / ".join(summary), out))
+        for label, suite in TEST_SUITES:
+            if not Path(suite).is_dir():
+                results.append((label, "SKIP", "目录不存在", ""))
+                continue
+            rc, out = run(["-m", "unittest", "discover", "-s", str(suite), "-t", str(suite)])
+            summary = [ln for ln in out.splitlines() if ln.startswith(("Ran ", "OK", "FAILED"))]
+            results.append((label, "PASS" if rc == 0 else "FAIL", " / ".join(summary), out))
 
     print(f"闸门检查（编辑器{'在线' if online else '离线'}）")
     print("-" * 56)

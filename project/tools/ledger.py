@@ -1,33 +1,34 @@
-"""已发布台账（S3-2 / O4）+ 两阶段状态（S3-4 / O2a）
+"""上架记录日志（ledger）—— 按商品维度记录本地发布动作的业务日志
 
-**为什么需要**：2026-11-07 真实发生过一次 —— P001 在测试轮被重复发布，
-闲鱼上出现两条同样的商品，只能人工下架。根因是「状态列被人重置回待上架」后，
-系统没有任何独立于 Excel 的发布记忆。
+**定位（2026-11-09 明确）**：它是一本**只追加、不回改的日志**，不是「平台在线清单」，
+也不参与发布拦截。它只回答「这件货我们发过几次、每次判定结果是什么」，
+回答不了「这件货现在还在不在线」——那是闲鱼后台的事，本地无从感知。
 
-**两阶段（O2a）**：发布前先写「意图」，发布后再写「结果」。
-崩溃时就能区分「还没开始」和「已经点了发布」：
+记录类型与状态推导（看某个商品 ID 的最后一条记录）：
+    claim(pid)        → inflight   点了发布前的占位（30 分钟租约）
+    confirm(pid, 结果) → confirmed / failed / unknown
+    release(pid)      → released   人工修正（平台侧已删除/下架时用）
+    无「事件」字段的旧记录（seed） → 按「结果」推
 
-    claim(pid)    → 事件=claim    状态=inflight    发布前写
-    confirm(pid)  → 事件=confirm  状态=confirmed   发布后写
-    release(pid)  → 事件=release  状态=released    人工核对为「没发出去」时冲销
+存储：`project/runtime/data/published.jsonl`，一行一条 JSON，坏行跳过（可重建）。
+运行时落盘（gitignore），不入仓。
 
-一条商品的状态 = **最后一条记录**的状态。查重只认 `confirmed`，
-所以 `inflight` / `released` 不会被误判成「已发布过」。
+命令：
+    python ledger.py list                 # 看全部记录与每条的状态
+    python ledger.py check <ID> [--dir]   # 查历史命中（同 ID 或同首图 hash 的 confirmed）
+    python ledger.py seed                 # 从 Excel「上架成功」行补录（幂等）
+    python ledger.py inflight             # 超租约未确认的 claim
+    python ledger.py release <ID> --note  # 人工修正记录
 
-**台账口径**：一行一条 JSON（jsonl）。重复判定两条规则：
-  1. 同一 `商品ID` 已 confirmed → 重复
-  2. 不同 ID 但 `首图hash` 相同 → 极可能是同一件货换了个 ID，也提示
-
-**首图口径**：与画布块 045「获取文件列表」一致 —— 递归、按文件名升序、名含点，取第一个。
-
-用法:
-    python ledger.py seed                     # 从 Excel 的「上架成功」行补齐（幂等）
-    python ledger.py check P001 [--dir 目录]   # 查以前发过没
-    python ledger.py inflight                 # 列出未确认的 claim
-    python ledger.py list
-
-台账落在 `project/runtime/data/`（运行态，已 gitignore），不入仓。
+口径说明：
+  · **check() 扫全历史**：某 ID 只要历史上出现过 confirmed 就命中，即使后面有 release。
+    需要「当前状态」请用 current_state()（最后一条记录）。
+  · 首图 hash 与上传口径一致：递归、按文件名升序、名含点。
+  · 发布流程**不再依赖本日志拦截**（曾因平台侧人工删除产生过期 confirmed，
+    误挡合法重发）；防误重发由 Excel 状态列决定。
 """
+
+from __future__ import annotations
 
 import argparse
 import datetime
@@ -195,10 +196,10 @@ def seed_from_excel(xlsx: Path, path: Path | None = None) -> dict:
 
 def main() -> int:
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
-    ap = argparse.ArgumentParser(description="已发布台账（防重复发布 / 两阶段状态）")
+    ap = argparse.ArgumentParser(description="上架记录日志（ledger）：按商品追溯，不拦发布")
     sub = ap.add_subparsers(dest="cmd", required=True)
 
-    s = sub.add_parser("seed", help="从 Excel 的「上架成功」行补齐台账")
+    s = sub.add_parser("seed", help="从 Excel 的「上架成功」行补录日志")
     s.add_argument("--xlsx", default=str(ROOT / "project" / "runtime" / "商品清单.xlsx"))
 
     c = sub.add_parser("check", help="查某商品是否发过")
@@ -206,7 +207,11 @@ def main() -> int:
     c.add_argument("--dir", help="套图目录，给了就一并比对首图")
 
     sub.add_parser("inflight", help="列出超租约未确认的 claim")
-    sub.add_parser("list", help="列出台账")
+    sub.add_parser("list", help="列出记录")
+
+    rel = sub.add_parser("release", help="人工在平台删除商品后补一条 release 记录")
+    rel.add_argument("pid")
+    rel.add_argument("--note", default="人工删除后冲销", help="冲销原因")
 
     a = ap.parse_args()
 
@@ -235,6 +240,12 @@ def main() -> int:
         for pid, rec in recs:
             print(f"    {pid:10} {rec.get('时间')}  run={rec.get('run_id', '')}")
         return 1
+
+    if a.cmd == "release":
+        rec = release(a.pid, note=a.note)
+        print(f"[OK] {a.pid} 已冲销为 {state(rec)}（{a.note}）")
+        print(f"     当前状态：{current_state(a.pid)}；之后可重新发布")
+        return 0
 
     recs = load()
     print(f"台账 {LEDGER}（{len(recs)} 条）")

@@ -49,7 +49,7 @@ def discover_port() -> int:
 
     logs = sorted(glob.glob(os.path.join(_LOG_DIR, "*.log")), key=os.path.getmtime, reverse=True)
     candidates: list[int] = []
-    for lg in logs[:3]:
+    for lg in logs[:12]:   # 引擎/桥日志会把消息日志挤出前3，扫描范围放宽
         with open(lg, "rb") as f:
             data = f.read()
         for p in reversed(re.findall(rb"127\.0\.0\.1:(\d{4,5})", data)):

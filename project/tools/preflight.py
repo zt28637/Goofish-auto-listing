@@ -150,10 +150,10 @@ def check_ledger(rows):
     done = [(r, pid) for r, pid, _c, st in rows if st == "上架成功"]
     missing = [(r, pid) for r, pid in done if pid and pid not in known]
     if not done:
-        return OK, "发布台账", "无「上架成功」行"
+        return OK, "上架记录日志", "无「上架成功」行"
     if missing:
-        return WARN, "发布台账", f"{len(missing)} 条已成功但不在台账 {missing[:5]} —— 跑一次 `python ledger.py seed`"
-    return OK, "发布台账", f"{len(done)} 条「上架成功」均已在台账"
+        return WARN, "上架记录日志", f"{len(missing)} 条已成功但不在台账 {missing[:5]} —— 跑一次 `python ledger.py seed`"
+    return OK, "上架记录日志", f"{len(done)} 条「上架成功」均已在台账"
 
 
 def run(xlsx: Path):

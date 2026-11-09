@@ -1,93 +1,94 @@
 # 闲鱼批量上架自动化
 
-> **影刀 RPA 上架执行引擎**：循环 `商品清单.xlsx`，把套图 + 文案真实上架到闲鱼网页版（goofish.com）。
-> 流程 = 影刀 `process3「咸鱼_批量上架」`（**192 块**画布，2026-11-07 23:10 全量转录；含登录态复检、`上架中` 状态与每件落盘、**凭据外置**、分类级联兜底、发布段结构化日志）。套图与文案由**上游产出（不在本仓范围）**，本仓只做**预检 + 上架**。
->
-> **两段式**：L0 `project/tools/precheck.py`（分级校验：`fail` 整批中止 / `warn` 只提示，引擎无关）→ L1 上架画布。脏数据挡在真实发布之前。
+> **混合模式**：Python（DrissionPage）做每一步页面操作，影刀 `main` 画布做编排（Excel 循环、状态过滤、回写、收尾）。
+> 浏览器统一用固定 profile + 9224 端口启动/复用真实 Edge（与项目一同款方案）。
+> 上游套图与文案不在本仓；本仓只做**预检 + 上架**。
 
 ---
 
-## 上架流程（影刀 process3）
+## 流程
 
 ```
-准备（循环外）：打开发布页（Edge）→ 路径变量 + 计数器初始化 → 打开 Excel
-    → 读凭据文件（`project/conf/credentials.local.json`）→ 登录检测/补登（含「快速进入」）
-└ 循环 Excel 行（一行=一件）：
-    登录态复检（描述框不可见 → 写「中断·登录失效」→ 退出循环）
-    → 上架状态判断（状态 ≠「待上架」→ 继续下一行）
-    → 套图上传 → 描述写入 → 分类级联选择（含 BACKSPACE 清脏值）
-    → 价格/原价 → 发货设置
-    → 写「上架中」→ 保存 Excel → 发布 → 成败判定（回写状态列 N）→ 保存 Excel → 跳回发布页
-收尾：保存关闭 Excel → 打印 成功/失败/不明 三项统计
+precheck（fail>0 整批停）
+  ↓
+影刀 main：
+  打开 Excel → 调用 xianyu_login（保证 9224 Edge + 登录态，打开发布页）
+  → 循环 Excel 行：
+      状态 ≠ 待上架            → 继续下一行
+      登录复检（check）        → 掉线写「中断·登录失效」并退出循环
+      Try：
+        2.上传套图 → 3.填写描述 → 4.选择分类（失败→写「上架失败」→继续）
+        → 5.填写价格 → 6.设置发货 → 写「上架中」并保存
+        → 7.发布 → 8.判定回写（成功/失败/不明 + 保存）
+      Catch：写「上架失败」并保存
+  → 关闭 Excel（保存）→ 导出日志
 ```
 
-**上游合同**（仅此两条，怎么生成不归本仓管）：
-1. `products/<商品ID>/套图/` 里有待上传的图片文件（流程按文件名升序**逐文件全量上传**，不挑扩展名——目录里别放非图片文件）
+**上游合同**（仅此两条）：
+1. `products/<商品ID>/套图/` 里有待上传的图片文件（逐文件全量上传，按文件名升序；目录内别放非图片）
 2. `商品清单.xlsx` 对应行的 分类/价格/原价/发货/套图目录/描述 六列已填好
 
 ---
 
-## 画布分区细节（块号对应 `project/modules/咸鱼_批量上架.md`）
+## 步骤模块（`project/modules/`）
 
-> ⚠️ **块号以转录文件为准**。画布一增删指令，此处全部后移——引用前先 `grep` 一次，不要凭记忆。
-> 本表最后校准：2026-11-07 23:15（192 块版）。
+| 步骤 | CodeFlow | 职责 |
+|---|---|---|
+| 1.登录 | `xianyu_login` | 启动/复用 9224 Edge（固定 profile）+ 登录 + 循环内复检（check） |
+| 2.上传套图 | `xianyu_upload` | 目录 `*.*` 递归、按名升序 |
+| 3.填写描述 | `xianyu_desc` | contenteditable 先 Ctrl+A 清场 |
+| 4.选择分类 | `xianyu_category` | 分类/品牌/成色/长度/材质 五个下拉 |
+| 5.填写价格 | `xianyu_price` | 售价 / 原价 |
+| 6.设置发货 | `xianyu_shipping` | 包邮 / 按距离 / 一口价 / 无需邮寄 + 自提 |
+| 7.发布 | `xianyu_publish` | `PUBLISH\|begin/click` + 点击发布 |
+| 8.判定回写 | `xianyu_verdict` | `PUBLISH\|verdict` 判定（跳商品页=成功） |
 
-| 区段 | 块号 | 内容 |
-|------|------|------|
-| 准备 | 001–008 | 打开 goofish.com/publish（Edge）、取页对象、设路径变量（products 目录 / 商品清单.xlsx）、成功/失败/不明计数清零、打开 Excel |
-| 凭据读取 | 009–012 | 读取 `project/conf/credentials.local.json` → 转 Json 对象 → 绑定变量 手机号/密码（**画布内不含明文**） |
-| **模拟真人操作** | **013 · 188** | 块 013「开启模拟真人操作」（motion_move / motion_click / motion_delay，最小停顿 1s，全局包裹）× 块 188「结束」—— 22:59 风控事件后追加，降低行为指纹风险 |
-| 咸鱼登录 | 014–031 | IF 检测登录表单 → 切密码登录 → 手机号/密码（变量输入/剪贴板粘贴）→ 勾隐私政策 → 登录 → 随机等待 5–7s → IF「快速进入」可见则点击；已登录自动跳过 |
-| 循环开始 | 032 | 循环Excel内容：第 2 行起、逐行（跑前人工确认队列） |
-| 登录态复检 | 033–036 | IF 描述输入框不可见 → 写「中断·登录失效」→ 退出循环（循环中途失效不再整批白跑） |
-| 上架状态判断 | 037–042 | 读索引13 状态列 → IF ≠「待上架」→ **继续下一次循环**（过滤已生效；入队口径=人工置「待上架」，空状态会被跳过） |
-| 套图上传 | 043–051 | 读索引11 套图目录 → 递归取文件列表按名排序 → ForEach 逐文件上传 |
-| 描述写入 | 052–056 | 点描述框 → 键盘输入索引12 |
-| 分类选择 | 057–131 | 索引3 分类路径按 `/` 拆分 → While 逐级：盒数不足则等待重试（**超 10 次判失败**）→ 已正确级别直接跳过 → 首子类名含 `ant-select-selection-overflow` 时无限循环逐次 `{BACKSPACE}` 清空残留脏标签（suffix 哨兵即停）→ 滚动到位 → 取选项列表匹配点击。**11-07 新增**：点击后重抓分类框（治陈旧句柄）、Try/Catch 兜底、级别未推进则判失败跳过该行 |
-| 价格输入 | 132–138 | 滚动到位 → 索引6 售价 → 索引7 原价 |
-| 发货设置 | 139–153 | 索引8：包邮 / 按距离计费 / 一口价 / 无需邮寄 四分支；含「支持自提」则追加勾选 |
-| 地址 | 154 | 采用闲鱼默认设置 |
-| 确认上架 | 155–163 | **`PUBLISH\|begin` 日志（块 156）** → 写「上架中」→ 保存 Excel（块 157/158）→ **`PUBLISH\|click` 日志（块 159）** → 点发布（块 160）→ 等待加载完成 → 等待 2s |
-| 上架状态记录 | 164–184 | **判「页面含咸鱼ID元素」=成功**（块 165）→ `PUBLISH\|verdict` 日志（块 167/173/179）→ 三路各回写状态列（块 **168/175/180** → Excel N 列 = 索引13，行号 loop_item_rownum）→ **块 185 保存 Excel** |
-| 回跳 | 186 | 成败两路都跳回发布页，防下一件继承脏表单 |
-| 收尾 | 187–192 | 结束模拟真人操作 → Excel 保存关闭（含状态列回写落盘）→ 打印三项统计 |
+共用：`tool/xianyu_common.py`（路径/状态/日志）、`tool/ui_action.py`（pick/click/fill/wait_stable，同项目一 `ui_action`）、`tool/xianyu_excel.py`（清单读写，供单步测试与行取值）。
+
+**元素表归各步骤自己持有**：每个步骤文件顶部的 `ELEM` 只写本步骤用到的元素，改版只改那一个文件。
 
 ---
 
-## 商品清单.xlsx 列定义（18 列，索引 0 起；影刀按 `loop_excel[n]` 列号读，判定后回写 N 列）
+## 商品清单.xlsx 列定义（18 列，索引 0 起；main 按 `loop_excel[n]` 读、写 N 列状态）
 
-| 索引 | 列名 | 影刀读取 | 说明 |
+| 索引 | 列名 | 读取 | 说明 |
 |----|------|------|------|
 | 0 | 商品ID | — | P001…，人工定位用 |
-| 1 | 商品名 | — | 上游素材 |
-| 2 | 类目 | — | 人工参考 |
-| 3 | 分类路径 | ✔ | 如 `服饰/DIY/全部/抓夹`，`/` 分级联 |
-| 4 | 关键词 | — | 上游素材 |
-| 5 | 规格 | — | 人工参考 |
-| 6 | 价格 | ✔ | 售价（元） |
-| 7 | 原价 | ✔ | 划线价 |
-| 8 | 发货设置 | ✔ | 包邮/按距离计费/一口价/无需邮寄，可加「支持自提」 |
-| 9 | 宝贝所在地 | — | 流程地址用默认，本列不消费 |
-| 10 | 原图目录 | — | 上游产物，上架不读 |
-| 11 | 套图目录 | ✔ | products/<ID>/套图/，逐文件上传 |
-| 12 | 描述 | ✔ | 描述兼标题（≤1500 字），上游填好 |
-| 13 | 状态 | ✔ 读 + 回写 | 发布前写「上架中」并落盘；判定后写「上架成功 / 上架失败 / 上架情况不明，待人工确认」；块 037 读入「上架状态」，非「待上架」行直接跳过。入队口径=人工置「待上架」；崩溃后残留「上架中」须先对账再改回「待上架」 |
-| 14 | 失败原因 | — | 人工记录用 |
-| 15–17 | 卖点/场景/目标人群 | — | 上游参数遗留列，影刀不读 |
+| 3 | 分类路径 | ✔ | `瑜伽垫/安踏/轻微使用痕迹/189/TPE` → 分类/品牌/成色/长度/材质 |
+| 6 / 7 | 价格 / 原价 | ✔ | 售价 / 划线价 |
+| 8 | 发货设置 | ✔ | 包邮 / 按距离计费 / 一口价 / 无需邮寄，可加「支持自提」 |
+| 11 | 套图目录 | ✔ | `products/<ID>/套图/` |
+| 12 | 描述 | ✔ | 描述兼标题（≤1500 字） |
+| 13 | 状态 | ✔ 读 + 回写 | 发布前「上架中」；结果「上架成功 / 上架失败 / 上架情况不明，待人工确认」；入队口径=人工置「待上架」 |
+| 14 | 失败原因 | — | 人工记录 |
 
 ---
 
-## 运行要点（实测踩坑固化）
+## 运行要点（实测固化）
 
-- 发布成败**不靠 toast**（弹窗作废不可判）：判「当前页含咸鱼ID元素」
-- 级联/动态元素**先滚动到视口中上部**再操作，否则点不中
-- 多选下拉脏值：**循环 `{BACKSPACE}` 清空已选标签再全量重勾**（清输入框无效，残留会串进下一件）
-- 成败两路都**跳回发布页**，防脏表单串件
-- **画布内无明文凭据**：块 009–012 从 `project/conf/credentials.local.json` 读手机号/密码；换号只改文件，不改画布
-- 流程**只跑状态列为「待上架」的行**：跑前把本批行置「待上架」，其余留空或终态即可
-- 崩溃恢复：发布前已落盘「上架中」；重启看到「上架中」不要直接重跑，先到「我的发布」对账，确认没发出去再改回「待上架」
-- 循环中途登录失效：写「中断·登录失效」并退出循环，人工处理后重跑（已成功的行不会重复）
-- 套图目录内出现非图片文件会被一并上传（逐文件不挑扩展名）
+- 成败判定：**发布后跳 `/item?id=…` = 成功**；发布按钮仍在=失败并补点一次；其余=不明
+- 分类：五个下拉按路径段顺序选；选项用「包含」匹配（`安踏`→`ANTA/安踏`、`189`→`180-189cm`）；选项出现是异步的，必须轮询
+- 描述框是 contenteditable，**先 Ctrl+A 清场**再输入，否则追加两遍
+- 发布前写「上架中」并落盘；崩溃后残留「上架中」先 `reconcile.py` 对账，不自动改回「待上架」
+- 凭据只在 `project/conf/credentials.local.json`；浏览器 profile 在 `project/runtime/profile`（均 gitignore）
+- **上架记录日志（ledger）**：每次判定写一条 `confirm`（成功/失败/不明），只做追溯与统计，**不参与拦截**；它不感知平台侧删除，修正记录用 `ledger.py release <ID>`
+
+---
+
+## 单步测试
+
+```powershell
+python "project/modules/1.登录/xianyu_login.py" --open   # 自动启动/复用 9224 浏览器
+python "project/modules/2.上传套图/xianyu_upload.py" --row 6 --open
+python "project/modules/4.选择分类/xianyu_category.py" --row 6
+python "project/modules/7.发布/xianyu_publish.py" --row 6                  # 只验证，不点
+python "project/modules/7.发布/xianyu_publish.py" --row 6 --confirm-publish # 真发
+
+# 离线节点测试
+python -m unittest discover -s "project/modules/测试" -t "project/modules/测试"
+```
+
+`--open` 会先刷新到发布页（清空未提交表单）；不加则操作当前页面。
 
 ---
 
@@ -95,51 +96,29 @@
 
 | 文件 | 作用 |
 |------|------|
-| `project/modules/咸鱼_批量上架.md` | **影刀画布 192 块全量转录**（流程真源，studio-mcp 自动转录生成，敏感字段由工具 POST_MASK 自动脱敏） |
-| `project/docs/失败模式清单.md` | 它在什么条件下会坏（触发 → 代价 → 检测 → 应对） |
-| `project/docs/优化路线图.md` | Agent 四轴（开发/运维/数据/业务）优化点与推进批次，每条带真实故障证据 |
-| `project/docs/面试速查.md` | 这套系统必须能讲清的 5 个文件、3 个故障案例、Agent 出错清单与自测题 |
-| `project/tools/shadowbot-canvas/` | 画布工具链：`sb_mcp.py`（编辑器本地 MCP 客户端）/ `extract_sb_catalog.py`（内置指令中文目录）/ `transcribe_canvas.py`（覆盖式转录）/ `sb_canvas_mcp.py`（封装为 MCP，注册见根 `.mcp.json`）/ `studio_tools.json`（编辑器 40 个 studio-mcp 工具快照，`sb_refresh_tools` 重建） |
-| `project/canvas/<flow_id>.json` | **画布结构化快照**（含每个块的填写值，已统一脱敏）。单文件 + git 历史 = 版本链：`git diff` 看改了什么，`git checkout` 拿回旧版 |
-| `project/tools/canvas_snapshot.py` | 快照导出（只读）；`--check` 比对不落盘、`--commit` 自动提交 `project/canvas/` |
-| `project/tools/check_truth_source.py` | 一致性检查：画布实际块数 = 转录 `.md` = 快照 = README/AGENTS 声明；`--offline` 不连编辑器 |
-| `project/tools/check_block_refs.py` | **块号引用校验**：用「折叠区域名称」对齐 README 分区表与转录，抓出区间漂移（换数字抓不到的那种） |
-| `project/tools/preflight.py` | **运行前体检**（只读）：凭据完整性 / Excel 锁与 Office 进程 / 写权限 / 表头列位 / 「上架中」残留 / 台账覆盖；BLOCK 时退出码 1 |
-| `project/tools/ledger.py` | **发布台账**（防重复发布）：`seed` 从「上架成功」行补齐（幂等）、`check <ID>` 查重、`list` 查看 |
-| `project/tools/log_parse.py` | **日志结构化**：影刀导出 txt → JSONL + 每件耗时汇总（兼容两种导出格式） |
-| `project/tools/reconcile.py` | **对账**：把「上架中」残留列成人工核对清单；按 `--set 行=已发布/未发布` 回填，不自动判定 |
-| `project/tools/verify.py` | **改动闸门**：一条命令跑完 快照比对 + 块数一致 + 块号引用（`--tests` 加跑单测） |
-| `project/tools/tests/` | 回归用例：`python -m unittest discover -s project/tools/tests`（当前 82 条） |
-| `project/runtime/商品清单.xlsx` | 唯一 Excel（18 列，见上表） |
-| `project/runtime/products/<ID>/` | 上架输入：`套图/`（上传源）+ `原图/`（留档） |
-| `project/conf/credentials.local.json` | 本地凭据（手机号/密码），**已 gitignore**；画布块 009–012 读取，缺失则启动报错 |
-
-**仓外依赖**：影刀客户端 + Edge + 闲鱼账号。
+| `project/modules/` | 步骤 CodeFlow（业务真源）+ common + 测试 + README |
+| `project/modules/主流程_main.md` | 影刀 `main` 画布转录（54 块编排） |
+| `project/docs/archive/咸鱼_批量上架_旧画布历史.md` | 已删除的旧画布转录（192 个指令块，仅审计） |
+| `project/canvas/main.json` | `main` 画布结构化快照 |
+| `project/tools/precheck.py` | L0 预检（fail / warn 两级） |
+| `project/tools/preflight.py` | 跑前体检（凭据/锁/表头/残留「上架中」/台账） |
+| `project/tools/ledger.py` | 上架记录日志（按商品追溯，不拦发布） |
+| `project/tools/reconcile.py` | 「上架中」对账清单 + 按人裁决回填 |
+| `project/tools/log_parse.py` | 影刀日志 → JSONL + 每件耗时 |
+| `project/tools/verify.py` | 改动闸门：快照 + 块数 + 块号 + 两套测试 |
+| `project/tools/shadowbot-canvas/` | 画布转录工具链（`transcribe_canvas.py main`） |
 
 ---
 
-## 启动
-
-```
-影刀 → 项目二应用 → 流程 process3「咸鱼_批量上架」→ 运行
-（Excel / products 路径已写死在块 003/004；登录仅在启动时检测一次，循环中途失效不补登，需人工处理后重跑）
-
-画布变更后重新转录（保持 .md 与真源一致）：
-启动影刀编辑器并停在目标应用页 → python project/tools/shadowbot-canvas/transcribe_canvas.py
-（或经 MCP：sb_transcribe_canvas，支持 dry_run）
-```
-
 ## MCP：画布不只可读，也可写
 
-`shadowbot-canvas` MCP 除原有 4 个转录工具外，还把编辑器 studio-mcp 的 **40 个工具**全部代理出来（命名 `sb_` + 下划线，如 `flow.edit_blocks` → `sb_flow_edit_blocks`，描述保留原名）。
+`shadowbot-canvas` MCP 把编辑器 studio-mcp 的 40 个工具代理为 `sb_*`：
 
 | 能力 | 工具 |
 |------|------|
-| 改画布 | `sb_flow_edit_blocks`（增删块）、`sb_flow_fill_blocks`（填字段）、`sb_flow_toggle_blocks`（注释/取消） |
-| 跑与观测 | `sb_app_run`、`sb_app_wait_run_finish`、`sb_app_stop_run`、`sb_app_logs`、`sb_flow_get_variable_snapshots` |
-| 安全网 | `sb_app_copy_flow`（改前备份）、`sb_app_save`、`sb_app_reload`（丢弃未保存）、`sb_diagnostics_snapshot` |
-| 查资料 | `sb_wiki_read` / `sb_wiki_search`（`block_catalog.md` 查 prototype_name）、`sb_selector_list` / `sb_selector_details` |
+| 改画布 | `sb_flow_edit_blocks`、`sb_flow_fill_blocks`、`sb_flow_toggle_blocks` |
+| 改 CodeFlow | `sb_codeflow_read` / `sb_codeflow_write` |
+| 跑与观测 | `sb_app_run`、`sb_app_wait_run_finish`、`sb_app_logs` |
+| 安全网 | `sb_app_copy_flow`、`sb_app_save`、`sb_app_reload`、`sb_diagnostics_snapshot` |
 
-**⚠️ `sb_app_run` 跑的是真实流程**：对 process3 直接运行＝真实发布。改画布前先 `sb_app_copy_flow` 到副本；测试用副本 + 限量 Excel，或先 `sb_flow_toggle_blocks` 注释发布块。
-
-新增/变更工具后需重启会话或 `/mcp` 重连才可见；编辑器升级后调 `sb_refresh_tools` 更新快照。
+**⚠️ `sb_app_run main` = 真实发布**：测试用单步命令，不要直接跑 main。

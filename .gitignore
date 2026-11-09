@@ -55,3 +55,6 @@ bailian-install.ps1
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# 固定 profile（登录态，禁止入仓）
+project/runtime/profile/

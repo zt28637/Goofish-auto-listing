@@ -94,10 +94,15 @@ def main() -> int:
     a = ap.parse_args()
 
     tpath, rpath = Path(a.transcript), Path(a.readme)
-    for p in (tpath, rpath):
-        if not p.exists():
-            print(f"[!] 文件不存在：{p}")
-            return 2
+    if not tpath.exists():
+        print(f"[SKIP] 历史转录已归档（同名画布流程已删除）：{tpath}")
+        return 0
+    if not rpath.exists():
+        print(f"[!] 文件不存在：{rpath}")
+        return 2
+    if SECTION not in rpath.read_text(encoding="utf-8", errors="ignore"):
+        print(f"[SKIP] README 已不含「{SECTION.strip()}」表")
+        return 0
 
     regions = parse_regions(tpath)
     rows = parse_readme_rows(rpath)
