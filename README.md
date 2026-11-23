@@ -11,16 +11,15 @@
 ```
 precheck（fail>0 整批停）
   ↓
-影刀 main：
-  打开 Excel → 调用 xianyu_login（保证 9224 Edge + 登录态，打开发布页）
-  → 循环 Excel 行：
-      状态 ≠ 待上架            → 继续下一行
-      登录复检（check）        → 掉线写「中断·登录失效」并退出循环
-      Try：
-        2.上传套图 → 3.填写描述 → 4.选择分类（失败→写「上架失败」→继续）
-        → 5.填写价格 → 6.设置发货 → 写「上架中」并保存
-        → 7.发布 → 8.判定回写（成功/失败/不明 + 保存）
-      Catch：写「上架失败」并保存
+影刀三层画布（2026-11-23 起对齐项目一 v3：main 只编排，Python 做步骤）：
+  main（8 块）→ 逐行上架（51 块，持有 Excel 与状态回写）→ 单件上架（50 块，串联 8 步）
+  逐行：打开 Excel → 循环行（状态 ≠ 待上架跳过）→ 写「上架中」并保存
+        → 调用「单件上架」：
+            登录复检掉线 → 中断 → 写「中断·登录失效」并退出循环
+            2~6 步任一 ok=False → 返回 step+原因 → 写「上架失败」
+            7.发布 → 8.判定 → verdict=success 写「上架成功」
+            点过发布但不能确认 → 「上架情况不明，待人工确认」
+            state=dry（试发布）→ 不回写，保持「待上架」
   → 关闭 Excel（保存）→ 导出日志
 ```
 
@@ -66,12 +65,13 @@ precheck（fail>0 整批停）
 
 ## 运行要点（实测固化）
 
-- 成败判定：**发布后跳 `/item?id=…` = 成功**；发布按钮仍在=失败并补点一次；其余=不明
+- 成败判定：**发布后跳 `/item?id=…` = 成功**；发布按钮仍在 = 补点一次并轮询跳转，仍不能确认 = 不明
+- **点过发布之后不写「上架失败」**：失败只属于点发布之前的步骤；无法确认一律「不明」，避免人工看到「失败」重排造成重复 listing
 - 分类：五个下拉按路径段顺序选；选项用「包含」匹配（`安踏`→`ANTA/安踏`、`189`→`180-189cm`）；选项出现是异步的，必须轮询
 - 描述框是 contenteditable，**先 Ctrl+A 清场**再输入，否则追加两遍
 - 发布前写「上架中」并落盘；崩溃后残留「上架中」先 `reconcile.py` 对账，不自动改回「待上架」
 - 凭据只在 `project/conf/credentials.local.json`；浏览器 profile 在 `project/runtime/profile`（均 gitignore）
-- **上架记录日志（ledger）**：每次判定写一条 `confirm`（成功/失败/不明），只做追溯与统计，**不参与拦截**；它不感知平台侧删除，修正记录用 `ledger.py release <ID>`
+- **上架记录日志（ledger）**：每次判定写一条 `confirm`（成功/不明），只做追溯与统计，**不参与拦截**；它不感知平台侧删除，修正记录用 `ledger.py release <ID>`
 
 ---
 
@@ -96,17 +96,19 @@ python -m unittest discover -s "project/modules/测试" -t "project/modules/测�
 
 | 文件 | 作用 |
 |------|------|
-| `project/modules/` | 步骤 CodeFlow（业务真源）+ common + 测试 + README |
-| `project/modules/主流程_main.md` | 影刀 `main` 画布转录（54 块编排） |
+| `project/modules/` | 步骤 CodeFlow（业务真源）+ 每节点 `logic.md` 逻辑文件 + common + 测试 + README |
+| `project/modules/主流程_main.md` · `逐行上架.md` · `单件上架.md` | 影刀三层画布转录（8 / 51 / 50 块） |
 | `project/docs/archive/咸鱼_批量上架_旧画布历史.md` | 已删除的旧画布转录（192 个指令块，仅审计） |
 | `project/canvas/main.json` | `main` 画布结构化快照 |
 | `project/tools/precheck.py` | L0 预检（fail / warn 两级） |
 | `project/tools/preflight.py` | 跑前体检（凭据/锁/表头/残留「上架中」/台账） |
 | `project/tools/ledger.py` | 上架记录日志（按商品追溯，不拦发布） |
+| `project/tools/secret_scan.py` | 凭据扫描（工作区 + git 历史），已接入 `verify.py` |
+| `project/tools/metrics.py` | 运行指标：`events.jsonl` + `log_parse` 汇总 → `docs/量化结果.md` |
 | `project/tools/reconcile.py` | 「上架中」对账清单 + 按人裁决回填 |
 | `project/tools/log_parse.py` | 影刀日志 → JSONL + 每件耗时 |
 | `project/tools/verify.py` | 改动闸门：快照 + 块数 + 块号 + 两套测试 |
-| `project/tools/shadowbot-canvas/` | 画布转录工具链（`transcribe_canvas.py main`） |
+| `project/tools/shadowbot-canvas/` | 影刀 MCP 工具箱（画布转录 + studio-mcp 40 工具代理） |
 
 ---
 

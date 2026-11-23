@@ -1,0 +1,1478 @@
+{
+ "flow_id": "process2",
+ "flow_name": "逐行上架",
+ "flow_kind": "visual",
+ "is_main": false,
+ "block_count": 51,
+ "captured_at": "2026-11-24 00:20:58",
+ "blocks": [
+  {
+   "block_id": "792d7b3e-583a-47cd-8aed-85c5950d688f",
+   "block_index": 0,
+   "prototype_name": "process.invoke_module",
+   "fields": {
+    "module": {
+     "value": "precheck"
+    },
+    "function": {
+     "value": "main"
+    },
+    "params": {
+     "value": {
+      "group_array": [
+       {
+        "kwargs": "F:/Programs/RPA自动化/2-电商上架自动化/project/runtime/商品清单.xlsx"
+       }
+      ]
+     }
+    },
+    "returnType": {
+     "value": "str"
+    }
+   },
+   "outputs": {
+    "invoke_result": "预检结果"
+   }
+  },
+  {
+   "block_id": "7c4267e6-97b1-4236-89c5-905038ea7d27",
+   "block_index": 1,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "str"
+    },
+    "value": {
+     "value": {
+      "expression": "str(预检结果)"
+     }
+    }
+   },
+   "outputs": {
+    "variable": "预检文本"
+   }
+  },
+  {
+   "block_id": "066b0ca3-3c5c-4f34-8ed0-4a7e02163e27",
+   "block_index": 2,
+   "prototype_name": "text.extract_content_from_text",
+   "fields": {
+    "text": {
+     "value": {
+      "variable": "预检文本"
+     }
+    },
+    "extract_way": {
+     "choices": [
+      "number",
+      "mobile_phone",
+      "email",
+      "id_card",
+      "custom"
+     ],
+     "value": "custom",
+     "default": "number"
+    },
+    "regular_pattern": {
+     "value": "fail=(\\d+)"
+    },
+    "just_get_first": {
+     "value": {
+      "expression": "True"
+     }
+    },
+    "ignore_case": {
+     "value": {
+      "expression": "False"
+     }
+    }
+   },
+   "outputs": {
+    "content": "失败次数"
+   }
+  },
+  {
+   "block_id": "146b9198-9485-4b4d-9ed9-753c17ba4637",
+   "block_index": 3,
+   "prototype_name": "workflow.if",
+   "fields": {
+    "operand1": {
+     "value": {
+      "variable": "失败次数"
+     }
+    },
+    "operator": {
+     "choices": [
+      "==",
+      "!=",
+      ">",
+      ">=",
+      "<",
+      "<=",
+      "in",
+      "not in",
+      "is true",
+      "is false",
+      "empty value",
+      "not empty value",
+      "starts with",
+      "not starts with",
+      "ends with",
+      "not ends with"
+     ],
+     "value": ">",
+     "default": "=="
+    },
+    "operand2": {
+     "value": "0"
+    },
+    "operator_options": {
+     "value": "{}"
+    }
+   }
+  },
+  {
+   "block_id": "e0d08c7c-6c49-41ce-a6cd-24b4c8ff3174",
+   "block_index": 4,
+   "prototype_name": "programing.log",
+   "fields": {
+    "type": {
+     "choices": [
+      "debug",
+      "info",
+      "warning",
+      "error"
+     ],
+     "value": "info"
+    },
+    "text": {
+     "value": "预检不通过"
+    }
+   }
+  },
+  {
+   "block_id": "bcd75f4f-0b9e-4ade-b0a3-4b6faff6ca30",
+   "block_index": 5,
+   "prototype_name": "process.return",
+   "fields": {}
+  },
+  {
+   "block_id": "2fcf063d-f4c3-49b8-9574-d10beaacd411",
+   "block_index": 6,
+   "prototype_name": "workflow.endif",
+   "fields": {}
+  },
+  {
+   "block_id": "4dfb57da-c1ba-4e62-9789-a9176ab8dd50",
+   "block_index": 7,
+   "prototype_name": "excel.launch",
+   "fields": {
+    "launch_way": {
+     "choices": [
+      "create",
+      "open"
+     ],
+     "value": "open"
+    },
+    "driver_way": {
+     "choices": [
+      "auto_check",
+      "office",
+      "wps",
+      "openpyxl"
+     ],
+     "value": "auto_check"
+    },
+    "open_filename": {
+     "value": {
+      "variable": "清单路径"
+     }
+    },
+    "save_filename": {},
+    "isvisible": {
+     "value": {
+      "expression": "True"
+     }
+    },
+    "ignoreformula": {
+     "value": {
+      "expression": "False"
+     }
+    },
+    "password": {},
+    "write_password": {},
+    "update_links": {
+     "value": {
+      "expression": "False"
+     }
+    }
+   },
+   "outputs": {
+    "excel_instance": "excel_instance"
+   }
+  },
+  {
+   "block_id": "bf00bd87-68bd-4012-9bbc-7d5df47750e0",
+   "block_index": 8,
+   "prototype_name": "process.invoke_module",
+   "fields": {
+    "module": {
+     "value": "xianyu_login"
+    },
+    "function": {
+     "value": "main"
+    },
+    "params": {
+     "value": {
+      "group_array": [
+       {
+        "args": {
+         "expression": "{\"open\": True}"
+        }
+       }
+      ]
+     }
+    },
+    "returnType": {
+     "value": "dict"
+    }
+   },
+   "outputs": {
+    "invoke_result": "登录结果"
+   }
+  },
+  {
+   "block_id": "0c49de2a-5137-47f0-b85d-ddad05d97fe3",
+   "block_index": 9,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "int"
+    },
+    "value": {
+     "value": {
+      "expression": "0"
+     }
+    }
+   },
+   "outputs": {
+    "variable": "成功数"
+   }
+  },
+  {
+   "block_id": "ea8cfa72-4d69-499b-a7bd-88b70d482865",
+   "block_index": 10,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "int"
+    },
+    "value": {
+     "value": {
+      "expression": "0"
+     }
+    }
+   },
+   "outputs": {
+    "variable": "失败数"
+   }
+  },
+  {
+   "block_id": "3eb16ad1-a0bb-456a-bde3-15764375a565",
+   "block_index": 11,
+   "prototype_name": "excel.loop_data_from_workbook",
+   "fields": {
+    "workbook": {
+     "value": {
+      "variable": "excel_instance"
+     }
+    },
+    "loop_way": {
+     "choices": [
+      "loop_range",
+      "loop_row",
+      "loop_column",
+      "used_range"
+     ],
+     "value": "loop_row",
+     "default": "used_range"
+    },
+    "range": {},
+    "begin_row_num": {
+     "value": "2"
+    },
+    "end_row_num": {
+     "value": "-1"
+    },
+    "begin_column_name": {},
+    "end_column_name": {},
+    "has_header_row": {
+     "value": {
+      "expression": "False"
+     }
+    },
+    "range_begin_row_num": {},
+    "range_begin_column_name": {},
+    "range_end_row_num": {},
+    "range_end_column_name": {},
+    "sheet_name": {},
+    "using_text": {
+     "value": {
+      "expression": "False"
+     }
+    },
+    "text_cols": {},
+    "clear_space": {
+     "value": {
+      "expression": "False"
+     }
+    }
+   },
+   "outputs": {
+    "loop_item": "loop_excel",
+    "loop_item_rownum": "loop_item_rownum",
+    "loop_item_columnname": "loop_item_columnname"
+   }
+  },
+  {
+   "block_id": "c624e849-0f2d-45df-98e1-f9934a9058c9",
+   "block_index": 12,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "str"
+    },
+    "value": {
+     "value": {
+      "expression": "loop_excel[13]"
+     }
+    }
+   },
+   "outputs": {
+    "variable": "上架状态"
+   }
+  },
+  {
+   "block_id": "c74c8677-f9ce-441f-be6c-9d5a4a899375",
+   "block_index": 13,
+   "prototype_name": "workflow.if",
+   "fields": {
+    "operand1": {
+     "value": {
+      "variable": "上架状态"
+     }
+    },
+    "operator": {
+     "choices": [
+      "==",
+      "!=",
+      ">",
+      ">=",
+      "<",
+      "<=",
+      "in",
+      "not in",
+      "is true",
+      "is false",
+      "empty value",
+      "not empty value",
+      "starts with",
+      "not starts with",
+      "ends with",
+      "not ends with"
+     ],
+     "value": "!=",
+     "default": "=="
+    },
+    "operand2": {
+     "value": "待上架"
+    },
+    "operator_options": {
+     "value": "{}"
+    }
+   }
+  },
+  {
+   "block_id": "05447dd8-b825-4344-86a0-1ec6599ddc30",
+   "block_index": 14,
+   "prototype_name": "workflow.continue",
+   "fields": {}
+  },
+  {
+   "block_id": "f169afb7-df80-4dc7-b6e2-f50f01c81641",
+   "block_index": 15,
+   "prototype_name": "workflow.endif",
+   "fields": {}
+  },
+  {
+   "block_id": "46440c4d-606b-4eca-b1eb-88fdea2f1320",
+   "block_index": 16,
+   "prototype_name": "programing.try",
+   "fields": {}
+  },
+  {
+   "block_id": "0bfd328d-9525-4c3b-bd08-e0434423d2eb",
+   "block_index": 17,
+   "prototype_name": "excel.write_data_to_workbook",
+   "fields": {
+    "workbook": {
+     "value": {
+      "variable": "excel_instance"
+     }
+    },
+    "write_range": {
+     "choices": [
+      "area",
+      "row",
+      "column"
+     ],
+     "value": "area"
+    },
+    "write_way": {
+     "choices": [
+      "append",
+      "insert",
+      "override"
+     ],
+     "value": "override",
+     "default": "append"
+    },
+    "write_column_way": {
+     "choices": [
+      "append",
+      "insert",
+      "override"
+     ],
+     "value": "override"
+    },
+    "row_num": {
+     "value": {
+      "variable": "loop_item_rownum"
+     },
+     "default": "1"
+    },
+    "column_name": {
+     "value": "N"
+    },
+    "begin_row_num": {
+     "value": "1"
+    },
+    "begin_column_name": {},
+    "content": {
+     "value": "上架中"
+    },
+    "sheet_name": {},
+    "write_as_text_cols": {}
+   }
+  },
+  {
+   "block_id": "87001784-64d2-4293-8d88-611f9ed37cef",
+   "block_index": 18,
+   "prototype_name": "excel.save",
+   "fields": {
+    "excel_instance": {
+     "value": {
+      "variable": "excel_instance"
+     }
+    },
+    "save_way": {
+     "choices": [
+      "save",
+      "saveas"
+     ],
+     "value": "save"
+    },
+    "filename": {},
+    "overwrite_file": {
+     "value": {
+      "expression": "True"
+     }
+    },
+    "is_close_after_save": {
+     "value": {
+      "expression": "False"
+     }
+    }
+   }
+  },
+  {
+   "block_id": "18b21d6c-073b-48db-94c2-4794d69f99ce",
+   "block_index": 19,
+   "prototype_name": "process.run",
+   "fields": {
+    "process": {
+     "value": "process3"
+    },
+    "arguments.row": {
+     "value": {
+      "expression": "list(loop_excel)"
+     }
+    },
+    "arguments.pid": {
+     "value": {
+      "expression": "loop_excel[0]"
+     }
+    },
+    "arguments.confirm_publish": {
+     "value": {
+      "variable": "自动发布"
+     },
+     "default": {
+      "expression": ""
+     }
+    }
+   },
+   "outputs": {
+    "process_result": "单件结果"
+   },
+   "output_properties": {
+    "process_result": [
+     {
+      "name": "ok",
+      "type": "bool",
+      "description": "",
+      "reference": {
+       "expression": "单件结果.ok"
+      }
+     },
+     {
+      "name": "state",
+      "type": "str",
+      "description": "",
+      "reference": {
+       "expression": "单件结果.state"
+      }
+     },
+     {
+      "name": "verdict",
+      "type": "str",
+      "description": "",
+      "reference": {
+       "expression": "单件结果.verdict"
+      }
+     },
+     {
+      "name": "step",
+      "type": "int",
+      "description": "",
+      "reference": {
+       "expression": "单件结果.step"
+      }
+     },
+     {
+      "name": "原因",
+      "type": "str",
+      "description": "",
+      "reference": {
+       "expression": "单件结果.原因"
+      }
+     },
+     {
+      "name": "中断",
+      "type": "bool",
+      "description": "",
+      "reference": {
+       "expression": "单件结果.中断"
+      }
+     }
+    ]
+   },
+   "form_state": "ready",
+   "target_flow": {
+    "flow_id": "process3",
+    "flow_name": "单件上架",
+    "flow_kind": "visual"
+   }
+  },
+  {
+   "block_id": "25f078d3-1de3-4d3c-bb7f-25c2695efeb3",
+   "block_index": 20,
+   "prototype_name": "workflow.if",
+   "fields": {
+    "operand1": {
+     "value": {
+      "expression": "单件结果.中断"
+     }
+    },
+    "operator": {
+     "choices": [
+      "==",
+      "!=",
+      ">",
+      ">=",
+      "<",
+      "<=",
+      "in",
+      "not in",
+      "is true",
+      "is false",
+      "empty value",
+      "not empty value",
+      "starts with",
+      "not starts with",
+      "ends with",
+      "not ends with"
+     ],
+     "value": "is true",
+     "default": "=="
+    },
+    "operand2": {},
+    "operator_options": {
+     "value": "{}"
+    }
+   }
+  },
+  {
+   "block_id": "bcbdb53f-7b46-4955-9b3b-4f8804ddd7c2",
+   "block_index": 21,
+   "prototype_name": "excel.write_data_to_workbook",
+   "fields": {
+    "workbook": {
+     "value": {
+      "variable": "excel_instance"
+     }
+    },
+    "write_range": {
+     "choices": [
+      "area",
+      "row",
+      "column"
+     ],
+     "value": "area"
+    },
+    "write_way": {
+     "choices": [
+      "append",
+      "insert",
+      "override"
+     ],
+     "value": "override",
+     "default": "append"
+    },
+    "write_column_way": {
+     "choices": [
+      "append",
+      "insert",
+      "override"
+     ],
+     "value": "override"
+    },
+    "row_num": {
+     "value": {
+      "variable": "loop_item_rownum"
+     },
+     "default": "1"
+    },
+    "column_name": {
+     "value": "N"
+    },
+    "begin_row_num": {
+     "value": "1"
+    },
+    "begin_column_name": {},
+    "content": {
+     "value": "中断·登录失效"
+    },
+    "sheet_name": {},
+    "write_as_text_cols": {}
+   }
+  },
+  {
+   "block_id": "9a38a2d3-6f12-4732-9dda-6ea6e237ea08",
+   "block_index": 22,
+   "prototype_name": "excel.save",
+   "fields": {
+    "excel_instance": {
+     "value": {
+      "variable": "excel_instance"
+     }
+    },
+    "save_way": {
+     "choices": [
+      "save",
+      "saveas"
+     ],
+     "value": "save"
+    },
+    "filename": {},
+    "overwrite_file": {
+     "value": {
+      "expression": "True"
+     }
+    },
+    "is_close_after_save": {
+     "value": {
+      "expression": "False"
+     }
+    }
+   }
+  },
+  {
+   "block_id": "3ecb124d-b40b-41c9-8da6-f7d29bf528b6",
+   "block_index": 23,
+   "prototype_name": "workflow.break",
+   "fields": {}
+  },
+  {
+   "block_id": "815cafea-337d-4804-b9ec-c87be31ba11a",
+   "block_index": 24,
+   "prototype_name": "workflow.endif",
+   "fields": {}
+  },
+  {
+   "block_id": "c3eb7f8a-0817-4eb0-bdd9-222571d9f3e8",
+   "block_index": 25,
+   "prototype_name": "workflow.if",
+   "fields": {
+    "operand1": {
+     "value": {
+      "expression": "单件结果.verdict"
+     }
+    },
+    "operator": {
+     "choices": [
+      "==",
+      "!=",
+      ">",
+      ">=",
+      "<",
+      "<=",
+      "in",
+      "not in",
+      "is true",
+      "is false",
+      "empty value",
+      "not empty value",
+      "starts with",
+      "not starts with",
+      "ends with",
+      "not ends with"
+     ],
+     "value": "=="
+    },
+    "operand2": {
+     "value": "success"
+    },
+    "operator_options": {
+     "value": "{}"
+    }
+   }
+  },
+  {
+   "block_id": "655215cc-fe0f-4a92-8b91-9e139854621e",
+   "block_index": 26,
+   "prototype_name": "excel.write_data_to_workbook",
+   "fields": {
+    "workbook": {
+     "value": {
+      "variable": "excel_instance"
+     }
+    },
+    "write_range": {
+     "choices": [
+      "area",
+      "row",
+      "column"
+     ],
+     "value": "area"
+    },
+    "write_way": {
+     "choices": [
+      "append",
+      "insert",
+      "override"
+     ],
+     "value": "override",
+     "default": "append"
+    },
+    "write_column_way": {
+     "choices": [
+      "append",
+      "insert",
+      "override"
+     ],
+     "value": "override"
+    },
+    "row_num": {
+     "value": {
+      "variable": "loop_item_rownum"
+     },
+     "default": "1"
+    },
+    "column_name": {
+     "value": "N"
+    },
+    "begin_row_num": {
+     "value": "1"
+    },
+    "begin_column_name": {},
+    "content": {
+     "value": "上架成功"
+    },
+    "sheet_name": {},
+    "write_as_text_cols": {}
+   }
+  },
+  {
+   "block_id": "5a851050-cdbb-417b-9b63-834d215e19e1",
+   "block_index": 27,
+   "prototype_name": "excel.save",
+   "fields": {
+    "excel_instance": {
+     "value": {
+      "variable": "excel_instance"
+     }
+    },
+    "save_way": {
+     "choices": [
+      "save",
+      "saveas"
+     ],
+     "value": "save"
+    },
+    "filename": {},
+    "overwrite_file": {
+     "value": {
+      "expression": "True"
+     }
+    },
+    "is_close_after_save": {
+     "value": {
+      "expression": "False"
+     }
+    }
+   }
+  },
+  {
+   "block_id": "3773a06d-512c-440f-ad28-11605db460db",
+   "block_index": 28,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "int"
+    },
+    "value": {
+     "value": {
+      "expression": "成功数+1"
+     }
+    }
+   },
+   "outputs": {
+    "variable": "成功数"
+   }
+  },
+  {
+   "block_id": "d402d19d-716d-4e48-9554-c9e1a06a6a7d",
+   "block_index": 29,
+   "prototype_name": "workflow.elseif",
+   "fields": {
+    "operand1": {
+     "value": {
+      "expression": "单件结果.state"
+     }
+    },
+    "operator": {
+     "choices": [
+      "==",
+      "!=",
+      ">",
+      ">=",
+      "<",
+      "<=",
+      "in",
+      "not in",
+      "is true",
+      "is false",
+      "empty value",
+      "not empty value",
+      "starts with",
+      "not starts with",
+      "ends with",
+      "not ends with"
+     ],
+     "value": "=="
+    },
+    "operand2": {
+     "value": "clicked"
+    },
+    "operator_options": {
+     "value": "{}"
+    }
+   }
+  },
+  {
+   "block_id": "31291fda-0a50-42ff-8d45-062307566874",
+   "block_index": 30,
+   "prototype_name": "excel.write_data_to_workbook",
+   "fields": {
+    "workbook": {
+     "value": {
+      "variable": "excel_instance"
+     }
+    },
+    "write_range": {
+     "choices": [
+      "area",
+      "row",
+      "column"
+     ],
+     "value": "area"
+    },
+    "write_way": {
+     "choices": [
+      "append",
+      "insert",
+      "override"
+     ],
+     "value": "override",
+     "default": "append"
+    },
+    "write_column_way": {
+     "choices": [
+      "append",
+      "insert",
+      "override"
+     ],
+     "value": "override"
+    },
+    "row_num": {
+     "value": {
+      "variable": "loop_item_rownum"
+     },
+     "default": "1"
+    },
+    "column_name": {
+     "value": "N"
+    },
+    "begin_row_num": {
+     "value": "1"
+    },
+    "begin_column_name": {},
+    "content": {
+     "value": "上架情况不明，待人工确认"
+    },
+    "sheet_name": {},
+    "write_as_text_cols": {}
+   }
+  },
+  {
+   "block_id": "d389e76d-d28b-4de0-bf7b-fa1345be53de",
+   "block_index": 31,
+   "prototype_name": "excel.save",
+   "fields": {
+    "excel_instance": {
+     "value": {
+      "variable": "excel_instance"
+     }
+    },
+    "save_way": {
+     "choices": [
+      "save",
+      "saveas"
+     ],
+     "value": "save"
+    },
+    "filename": {},
+    "overwrite_file": {
+     "value": {
+      "expression": "True"
+     }
+    },
+    "is_close_after_save": {
+     "value": {
+      "expression": "False"
+     }
+    }
+   }
+  },
+  {
+   "block_id": "7f96a7f1-f342-4012-9918-1b49ed14b894",
+   "block_index": 32,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "int"
+    },
+    "value": {
+     "value": {
+      "expression": "失败数+1"
+     }
+    }
+   },
+   "outputs": {
+    "variable": "失败数"
+   }
+  },
+  {
+   "block_id": "7ec8c8fb-abcd-4cdf-9988-8010625a0ddb",
+   "block_index": 33,
+   "prototype_name": "workflow.elseif",
+   "fields": {
+    "operand1": {
+     "value": {
+      "expression": "单件结果.state"
+     }
+    },
+    "operator": {
+     "choices": [
+      "==",
+      "!=",
+      ">",
+      ">=",
+      "<",
+      "<=",
+      "in",
+      "not in",
+      "is true",
+      "is false",
+      "empty value",
+      "not empty value",
+      "starts with",
+      "not starts with",
+      "ends with",
+      "not ends with"
+     ],
+     "value": "=="
+    },
+    "operand2": {
+     "value": "dry"
+    },
+    "operator_options": {
+     "value": "{}"
+    }
+   }
+  },
+  {
+   "block_id": "027a1f52-2f54-4f55-9637-81d1465554b1",
+   "block_index": 34,
+   "prototype_name": "programing.log",
+   "fields": {
+    "type": {
+     "choices": [
+      "debug",
+      "info",
+      "warning",
+      "error"
+     ],
+     "value": "info"
+    },
+    "text": {
+     "value": {
+      "expression": "f'试发布（不点）：{loop_excel[0]} 表单已填，保持待上架'"
+     }
+    }
+   }
+  },
+  {
+   "block_id": "ddf3b04b-0445-4da1-80af-b7917c464ac1",
+   "block_index": 35,
+   "prototype_name": "workflow.continue",
+   "fields": {}
+  },
+  {
+   "block_id": "30cdc8f4-2e9d-45de-bbef-1a72f62f49ac",
+   "block_index": 36,
+   "prototype_name": "workflow.else",
+   "fields": {}
+  },
+  {
+   "block_id": "8bd994c8-491a-4756-bafd-9930c55211e4",
+   "block_index": 37,
+   "prototype_name": "excel.write_data_to_workbook",
+   "fields": {
+    "workbook": {
+     "value": {
+      "variable": "excel_instance"
+     }
+    },
+    "write_range": {
+     "choices": [
+      "area",
+      "row",
+      "column"
+     ],
+     "value": "area"
+    },
+    "write_way": {
+     "choices": [
+      "append",
+      "insert",
+      "override"
+     ],
+     "value": "override",
+     "default": "append"
+    },
+    "write_column_way": {
+     "choices": [
+      "append",
+      "insert",
+      "override"
+     ],
+     "value": "override"
+    },
+    "row_num": {
+     "value": {
+      "variable": "loop_item_rownum"
+     },
+     "default": "1"
+    },
+    "column_name": {
+     "value": "N"
+    },
+    "begin_row_num": {
+     "value": "1"
+    },
+    "begin_column_name": {},
+    "content": {
+     "value": "上架失败"
+    },
+    "sheet_name": {},
+    "write_as_text_cols": {}
+   }
+  },
+  {
+   "block_id": "1e850119-503a-440d-8f74-0c44c29eb46a",
+   "block_index": 38,
+   "prototype_name": "excel.save",
+   "fields": {
+    "excel_instance": {
+     "value": {
+      "variable": "excel_instance"
+     }
+    },
+    "save_way": {
+     "choices": [
+      "save",
+      "saveas"
+     ],
+     "value": "save"
+    },
+    "filename": {},
+    "overwrite_file": {
+     "value": {
+      "expression": "True"
+     }
+    },
+    "is_close_after_save": {
+     "value": {
+      "expression": "False"
+     }
+    }
+   }
+  },
+  {
+   "block_id": "be2b743a-5644-4ead-a15f-860508156cf5",
+   "block_index": 39,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "int"
+    },
+    "value": {
+     "value": {
+      "expression": "失败数+1"
+     }
+    }
+   },
+   "outputs": {
+    "variable": "失败数"
+   }
+  },
+  {
+   "block_id": "f1c971d1-0344-49c4-ad29-f9c4a1441930",
+   "block_index": 40,
+   "prototype_name": "workflow.endif",
+   "fields": {}
+  },
+  {
+   "block_id": "c7ad0c23-505f-4f6a-9e85-09b3123b1529",
+   "block_index": 41,
+   "prototype_name": "programing.catch",
+   "fields": {},
+   "outputs": {
+    "exception": "exception"
+   }
+  },
+  {
+   "block_id": "62f08cdc-41fd-4f0e-a7e9-e24325e1fd95",
+   "block_index": 42,
+   "prototype_name": "excel.write_data_to_workbook",
+   "fields": {
+    "workbook": {
+     "value": {
+      "variable": "excel_instance"
+     }
+    },
+    "write_range": {
+     "choices": [
+      "area",
+      "row",
+      "column"
+     ],
+     "value": "area"
+    },
+    "write_way": {
+     "choices": [
+      "append",
+      "insert",
+      "override"
+     ],
+     "value": "override",
+     "default": "append"
+    },
+    "write_column_way": {
+     "choices": [
+      "append",
+      "insert",
+      "override"
+     ],
+     "value": "override"
+    },
+    "row_num": {
+     "value": {
+      "variable": "loop_item_rownum"
+     },
+     "default": "1"
+    },
+    "column_name": {
+     "value": "N"
+    },
+    "begin_row_num": {
+     "value": "1"
+    },
+    "begin_column_name": {},
+    "content": {
+     "value": "上架情况不明，待人工确认"
+    },
+    "sheet_name": {},
+    "write_as_text_cols": {}
+   }
+  },
+  {
+   "block_id": "f88bd3aa-0d17-44a2-8301-f7efd8928c0f",
+   "block_index": 43,
+   "prototype_name": "excel.save",
+   "fields": {
+    "excel_instance": {
+     "value": {
+      "variable": "excel_instance"
+     }
+    },
+    "save_way": {
+     "choices": [
+      "save",
+      "saveas"
+     ],
+     "value": "save"
+    },
+    "filename": {},
+    "overwrite_file": {
+     "value": {
+      "expression": "True"
+     }
+    },
+    "is_close_after_save": {
+     "value": {
+      "expression": "False"
+     }
+    }
+   }
+  },
+  {
+   "block_id": "37d4b049-24a9-4df3-8082-0d1966c8d00d",
+   "block_index": 44,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "int"
+    },
+    "value": {
+     "value": {
+      "expression": "失败数+1"
+     }
+    }
+   },
+   "outputs": {
+    "variable": "失败数"
+   }
+  },
+  {
+   "block_id": "6fb3b2e4-d5b4-435f-8853-f0920a46f50c",
+   "block_index": 45,
+   "prototype_name": "programing.endtry",
+   "fields": {}
+  },
+  {
+   "block_id": "e4ce5f14-2283-4235-afcd-82662db40a36",
+   "block_index": 46,
+   "prototype_name": "workflow.endloop",
+   "fields": {}
+  },
+  {
+   "block_id": "99f7629d-bea8-46c5-ab38-ad84b55aef84",
+   "block_index": 47,
+   "prototype_name": "excel.close",
+   "fields": {
+    "operation": {
+     "choices": [
+      "close_specified",
+      "close_all"
+     ],
+     "value": "close_specified"
+    },
+    "excel_instance": {
+     "value": {
+      "variable": "excel_instance"
+     }
+    },
+    "close_way": {
+     "choices": [
+      "notsave",
+      "save",
+      "saveas"
+     ],
+     "value": "save"
+    },
+    "filename": {},
+    "overwrite_file": {
+     "value": {
+      "expression": "True"
+     }
+    },
+    "close_process": {
+     "choices": [
+      "office",
+      "wps"
+     ],
+     "value": "office"
+    },
+    "task_kill": {
+     "value": {
+      "expression": "True"
+     }
+    }
+   }
+  },
+  {
+   "block_id": "4310f6b0-0083-4450-8540-f0c8ff4273f3",
+   "block_index": 48,
+   "prototype_name": "datetime.now",
+   "fields": {},
+   "outputs": {
+    "datetime_instance": "当前时间"
+   }
+  },
+  {
+   "block_id": "b2ded354-512d-412a-a90b-4b8e7340f24b",
+   "block_index": 49,
+   "prototype_name": "programing.exportlog",
+   "fields": {
+    "custom_folder_path": {
+     "value": "F:/Programs/RPA自动化/2-电商上架自动化/project/runtime/logs"
+    },
+    "file_name": {
+     "value": {
+      "expression": "当前时间.strftime('%Y-%m-%d_%H-%M-%S')+'.txt'"
+     },
+     "default": "日志文件.txt"
+    }
+   },
+   "outputs": {
+    "file_path": "file_path"
+   }
+  },
+  {
+   "block_id": "c5e4cfbe-ac9f-4291-ab6e-c33025edaae3",
+   "block_index": 50,
+   "prototype_name": "programing.log",
+   "fields": {
+    "type": {
+     "choices": [
+      "debug",
+      "info",
+      "warning",
+      "error"
+     ],
+     "value": "info"
+    },
+    "text": {
+     "value": {
+      "expression": "f'逐行上架结束：成功 {成功数} 行 / 失败 {失败数} 行'"
+     }
+    }
+   }
+  }
+ ]
+}

@@ -102,6 +102,22 @@ def _age_minutes(ts: str) -> float:
     return 0.0
 
 
+# 判定结果有两种口径：步骤代码写英文枚举（success/failed/unknown），
+# reconcile/seed 与历史记录写中文。confirm 统一存中文，state 两种都认。
+_RESULT_ZH = {
+    "success": "上架成功",
+    "failed": "上架失败",
+    "unknown": "上架情况不明，待人工确认",
+}
+_RESULT_STATE = {
+    "success": "confirmed",
+    "failed": "failed",
+    "上架成功": "confirmed",
+    "上架失败": "failed",
+    "上架情况不明，待人工确认": "unknown",
+}
+
+
 def state(rec: dict) -> str:
     """单条记录代表的状态。无「事件」字段的是旧格式/seed 记录，按结果推断。"""
     ev = rec.get("事件")
@@ -110,13 +126,7 @@ def state(rec: dict) -> str:
     if ev == "release":
         return "released"
     res = rec.get("结果") or ""
-    if res == "上架成功":
-        return "confirmed"
-    if res == "上架失败":
-        return "failed"
-    if res:
-        return "unknown"
-    return "unknown"
+    return _RESULT_STATE.get(res, "unknown")
 
 
 def current_state(pid: str, path: Path | None = None) -> str | None:
@@ -135,7 +145,8 @@ def claim(pid: str, run_id: str = "", note: str = "", path: Path | None = None) 
 
 
 def confirm(pid: str, result: str, run_id: str = "", cover: str = "", path: Path | None = None) -> dict:
-    rec = {"商品ID": pid, "事件": "confirm", "结果": result, "时间": _now(), "run_id": run_id}
+    rec = {"商品ID": pid, "事件": "confirm", "结果": _RESULT_ZH.get(result, result),
+           "时间": _now(), "run_id": run_id}
     if cover:
         rec["首图hash"] = cover
     append(rec, path)

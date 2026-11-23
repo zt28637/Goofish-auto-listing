@@ -5,30 +5,16 @@
 含「支持自提」则追加勾选。
 """
 
-# ---- 仓库内跨文件夹 import 垫片（影刀 CodeFlow 是平铺的，这段在影刀里空转）----
+# ---- 仓库内跨文件夹 import 垫片（影刀 CodeFlow 是平铺的，正式跑时为空操作）----
 import os as _os
 import sys as _sys
 _HERE = _os.path.dirname(_os.path.abspath(__file__)) if "__file__" in globals() else ""
-if _HERE and _HERE not in _sys.path:          # 影刀运行时不把应用目录放进来
-    _sys.path.insert(0, _HERE)
 _ROOT = _os.path.dirname(_HERE) if _HERE else ""
-for _d in ("tool", "1.登录", "2.上传套图", "3.填写描述", "4.选择分类",
-           "5.填写价格", "6.设置发货", "7.发布", "8.判定回写"):
-    _p = _os.path.join(_ROOT, _d) if _ROOT else ""
-    if _p and _os.path.isdir(_p) and _p not in _sys.path:
+_MODS = ("tool", "1.登录", "2.上传套图", "3.填写描述", "4.选择分类",
+         "5.填写价格", "6.设置发货", "7.发布", "8.判定回写")
+for _p in ([_HERE] + [_os.path.join(_ROOT, _d) for _d in _MODS] if _ROOT else [_HERE]):
+    if _p and _p not in _sys.path:
         _sys.path.insert(0, _p)
-
-import os as _os
-import sys as _sys
-_HERE = _os.path.dirname(_os.path.abspath(__file__)) if "__file__" in globals() else ""
-if _HERE and _HERE not in _sys.path:      # 影刀运行时不把应用目录放进来
-    _sys.path.insert(0, _HERE)
-for _root in (_HERE, _os.path.dirname(_HERE) if _HERE else ""):
-    for _d in ("tool", "0.打开浏览器", "1.登录", "2.上传套图", "3.填写描述",
-               "4.选择分类", "5.填写价格", "6.设置发货", "7.发布", "8.判定回写", "9.编排"):
-        _p = _os.path.join(_root, _d) if _root else ""
-        if _p and _p not in _sys.path:
-            _sys.path.insert(0, _p)
 
 import time
 

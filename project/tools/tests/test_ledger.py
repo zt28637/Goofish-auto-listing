@@ -84,6 +84,19 @@ class TestLedger(unittest.TestCase):
         self.db.write_text('{"商品ID":"A"}\n不是json\n', encoding="utf-8")
         self.assertEqual(len(ledger.load()), 1)
 
+    def test_legacy_english_results_are_read(self):
+        """回归：步骤代码写 success/failed，旧 state() 只认中文 → 全读成 unknown。"""
+        ledger.append({"商品ID": "P001", "事件": "confirm", "结果": "success"})
+        ledger.append({"商品ID": "P002", "事件": "confirm", "结果": "failed"})
+        self.assertEqual(ledger.current_state("P001"), "confirmed")
+        self.assertEqual(ledger.current_state("P002"), "failed")
+
+    def test_confirm_normalizes_to_chinese(self):
+        ledger.confirm("P003", "success", run_id="r1")
+        rec = ledger.load()[-1]
+        self.assertEqual(rec["结果"], "上架成功")
+        self.assertEqual(ledger.current_state("P003"), "confirmed")
+
     def test_seed_is_idempotent(self):
         d = make_images("seed")
         xlsx = make_xlsx(TMP / "seed.xlsx", rows=[

@@ -11,8 +11,8 @@ import sys
 # 与各模块同款路径垫片：让测试目录能 import 兄弟模块
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _ROOT = os.path.normpath(os.path.join(_HERE, ".."))
-for _d in ("tool", "0.打开浏览器", "1.登录", "2.上传套图", "3.填写描述",
-               "4.选择分类", "5.填写价格", "6.设置发货", "7.发布", "8.判定回写", "9.编排"):
+for _d in ("tool", "1.登录", "2.上传套图", "3.填写描述",
+           "4.选择分类", "5.填写价格", "6.设置发货", "7.发布", "8.判定回写"):
     _p = os.path.join(_ROOT, _d)
     if os.path.isdir(_p) and _p not in sys.path:
         sys.path.insert(0, _p)
@@ -120,7 +120,7 @@ class FakePage:
     def cookies(self, all_domains=False):
         return self.cookie_list
 
-    def get(self, url):
+    def get(self, url, **kw):
         self.got.append(url)
         self.url = url
 

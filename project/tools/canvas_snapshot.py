@@ -123,9 +123,16 @@ def list_flows() -> dict:
 
 
 def take(only: set, dry_run: bool) -> int:
+    bad = sb_mcp.wrong_app()
+    if bad:
+        print(f"[!] 编辑器当前打开的是「{bad}」，本仓应用是「{sb_mcp.EXPECTED_APP_NAME}」。")
+        print("    开错应用会把别家流程写进 project/canvas/（本仓是 Public），已放弃。请切换应用后重跑。")
+        return 2
     flows = list_flows()
     targets = [fid for fid, f in flows.items()
-               if f.get("flow_kind") == "visual" and (not only or fid in only)]
+               # 备份流程（名字含「备份」）是改版期的临时副本，不进快照/不进仓库
+               if f.get("flow_kind") == "visual" and "备份" not in f.get("flow_name", "")
+               and (not only or fid in only)]
     if not targets:
         print("[!] 编辑器里没有可导出的 Visual 流程")
         return 1

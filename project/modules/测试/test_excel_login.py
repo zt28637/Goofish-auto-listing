@@ -116,6 +116,57 @@ class TestLogin(unittest.TestCase):
         page = fakes.FakePage(ele_map={common.LOGIN_FRAME[0]: frame})
         self.assertFalse(login.check_alive(page))
 
+    def test_login_failure_reports_not_alive(self):
+        """登录/浏览器失败必须显式 alive=False；画布默认值也按 False 判。"""
+        from unittest import mock
+        with mock.patch.object(login, "ensure_browser", return_value={"ok": False, "detail": "x"}):
+            self.assertFalse(login.main({"check": True}).get("alive", False))
+        with mock.patch.object(login, "ensure_browser", side_effect=RuntimeError("x")):
+            self.assertFalse(login.main({"check": True}).get("alive", False))
+
+    def test_goto_retries_and_reattaches(self):
+        """冷启动断连：goto 应重连后重试，且返回新句柄。"""
+        from unittest import mock
+
+        class Flaky(fakes.FakePage):
+            def __init__(self):
+                super().__init__()
+                self.attempts = 0
+
+            def get(self, url, **kw):
+                self.attempts += 1
+                if self.attempts == 1:
+                    raise RuntimeError("PageDisconnectedError")
+                return super().get(url, **kw)
+
+        page = Flaky()
+        with mock.patch.object(login, "_attach", return_value=page), \
+                mock.patch.object(login.time, "sleep"):
+            got = login.goto(page, common.PUBLISH_URL)
+        self.assertIs(got, page)
+        self.assertEqual(page.attempts, 2)
+        self.assertEqual(page.got, [common.PUBLISH_URL])
+
+    def test_goto_raises_after_retries(self):
+        """重连也救不回来时必须抛错，不能假装打开成功。"""
+        from unittest import mock
+
+        class Dead(fakes.FakePage):
+            def __init__(self):
+                super().__init__()
+                self.attempts = 0
+
+            def get(self, url, **kw):
+                self.attempts += 1
+                raise RuntimeError("timeout")
+
+        page = Dead()
+        with mock.patch.object(login, "_attach", return_value=page), \
+                mock.patch.object(login.time, "sleep"):
+            with self.assertRaises(RuntimeError):
+                login.goto(page, common.PUBLISH_URL, retries=2)
+        self.assertEqual(page.attempts, 3)      # 1 次 + 2 次重试
+
     def test_load_credentials_env_and_missing(self):
         old = {k: os.environ.get(k) for k in ("XIANYU_PHONE", "XIANYU_PASSWORD")}
         try:

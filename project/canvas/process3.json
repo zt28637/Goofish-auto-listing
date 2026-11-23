@@ -1,0 +1,1130 @@
+{
+ "flow_id": "process3",
+ "flow_name": "单件上架",
+ "flow_kind": "visual",
+ "is_main": false,
+ "block_count": 50,
+ "captured_at": "2026-11-24 00:20:58",
+ "blocks": [
+  {
+   "block_id": "bcfc6646-dcc0-4fc6-8441-fa9202b04dc2",
+   "block_index": 0,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "bool"
+    },
+    "value": {
+     "value": {
+      "expression": "False"
+     }
+    }
+   },
+   "outputs": {
+    "variable": "ok"
+   }
+  },
+  {
+   "block_id": "ba834603-ed3a-4d48-ace4-0b3dd1b56c2f",
+   "block_index": 1,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "str"
+    },
+    "value": {}
+   },
+   "outputs": {
+    "variable": "state"
+   }
+  },
+  {
+   "block_id": "16126c2b-0dc0-468b-8d13-cde29457078f",
+   "block_index": 2,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "str"
+    },
+    "value": {
+     "value": {
+      "expression": "'unknown'"
+     }
+    }
+   },
+   "outputs": {
+    "variable": "verdict"
+   }
+  },
+  {
+   "block_id": "c22fa678-bb8f-42cb-9336-3114e573462d",
+   "block_index": 3,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "int"
+    },
+    "value": {
+     "value": {
+      "expression": "0"
+     }
+    }
+   },
+   "outputs": {
+    "variable": "step"
+   }
+  },
+  {
+   "block_id": "87d13a62-51e3-4a48-94e2-93a833a1b422",
+   "block_index": 4,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "str"
+    },
+    "value": {}
+   },
+   "outputs": {
+    "variable": "原因"
+   }
+  },
+  {
+   "block_id": "809cd703-1713-4c2f-8029-364de086a4ac",
+   "block_index": 5,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "bool"
+    },
+    "value": {
+     "value": {
+      "expression": "False"
+     }
+    }
+   },
+   "outputs": {
+    "variable": "中断"
+   }
+  },
+  {
+   "block_id": "d5a45ada-c23c-4f82-8da9-10e3c131f883",
+   "block_index": 6,
+   "prototype_name": "programing.try",
+   "fields": {}
+  },
+  {
+   "block_id": "e76617d3-471d-459d-bcc6-3b37e4d80b60",
+   "block_index": 7,
+   "prototype_name": "process.invoke_module",
+   "fields": {
+    "module": {
+     "value": "xianyu_login"
+    },
+    "function": {
+     "value": "main"
+    },
+    "params": {
+     "value": {
+      "group_array": [
+       {
+        "args": {
+         "expression": "{\"open\": True, \"check\": True}"
+        }
+       }
+      ]
+     }
+    },
+    "returnType": {
+     "value": "dict"
+    }
+   },
+   "outputs": {
+    "invoke_result": "存活结果"
+   }
+  },
+  {
+   "block_id": "e2f45c18-7d2b-45bb-b9ba-e8ee8b79fc00",
+   "block_index": 8,
+   "prototype_name": "workflow.if",
+   "fields": {
+    "operand1": {
+     "value": {
+      "expression": "not 存活结果.get('alive', False)"
+     }
+    },
+    "operator": {
+     "choices": [
+      "==",
+      "!=",
+      ">",
+      ">=",
+      "<",
+      "<=",
+      "in",
+      "not in",
+      "is true",
+      "is false",
+      "empty value",
+      "not empty value",
+      "starts with",
+      "not starts with",
+      "ends with",
+      "not ends with"
+     ],
+     "value": "is true",
+     "default": "=="
+    },
+    "operand2": {},
+    "operator_options": {
+     "value": "{}"
+    }
+   }
+  },
+  {
+   "block_id": "252c6947-a124-43c6-84c2-1578d469d303",
+   "block_index": 9,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "bool"
+    },
+    "value": {
+     "value": {
+      "expression": "True"
+     }
+    }
+   },
+   "outputs": {
+    "variable": "中断"
+   }
+  },
+  {
+   "block_id": "7a51c6a1-dc56-4cd1-be05-2353d1711bb2",
+   "block_index": 10,
+   "prototype_name": "process.return",
+   "fields": {}
+  },
+  {
+   "block_id": "a495805f-d4fe-45a9-b921-dbb4ddf9b777",
+   "block_index": 11,
+   "prototype_name": "workflow.endif",
+   "fields": {}
+  },
+  {
+   "block_id": "923aa260-d11a-4ae0-9eea-ac4d6d0da8e4",
+   "block_index": 12,
+   "prototype_name": "process.invoke_module",
+   "fields": {
+    "module": {
+     "value": "xianyu_upload"
+    },
+    "function": {
+     "value": "main"
+    },
+    "params": {
+     "value": {
+      "group_array": [
+       {
+        "args": {
+         "expression": "{\"row\": row}"
+        }
+       }
+      ]
+     }
+    },
+    "returnType": {
+     "value": "dict"
+    }
+   },
+   "outputs": {
+    "invoke_result": "上传结果"
+   }
+  },
+  {
+   "block_id": "5e4c9c4f-89e8-4a71-bc49-878dbe0b8951",
+   "block_index": 13,
+   "prototype_name": "workflow.if",
+   "fields": {
+    "operand1": {
+     "value": {
+      "expression": "not 上传结果.get('ok', False)"
+     }
+    },
+    "operator": {
+     "choices": [
+      "==",
+      "!=",
+      ">",
+      ">=",
+      "<",
+      "<=",
+      "in",
+      "not in",
+      "is true",
+      "is false",
+      "empty value",
+      "not empty value",
+      "starts with",
+      "not starts with",
+      "ends with",
+      "not ends with"
+     ],
+     "value": "is true",
+     "default": "=="
+    },
+    "operand2": {},
+    "operator_options": {
+     "value": "{}"
+    }
+   }
+  },
+  {
+   "block_id": "366e4c82-c04a-45ba-bd5b-20d538639a6c",
+   "block_index": 14,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "int"
+    },
+    "value": {
+     "value": {
+      "expression": "2"
+     }
+    }
+   },
+   "outputs": {
+    "variable": "step"
+   }
+  },
+  {
+   "block_id": "fa921522-1067-4a43-8119-cbb9f1349dbf",
+   "block_index": 15,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "str"
+    },
+    "value": {
+     "value": {
+      "expression": "上传结果.get('error','')"
+     }
+    }
+   },
+   "outputs": {
+    "variable": "原因"
+   }
+  },
+  {
+   "block_id": "126a7fd7-7509-45e2-809c-77d50594bc91",
+   "block_index": 16,
+   "prototype_name": "process.return",
+   "fields": {}
+  },
+  {
+   "block_id": "23d92fe5-2e5a-44cc-95a2-70079637c90c",
+   "block_index": 17,
+   "prototype_name": "workflow.endif",
+   "fields": {}
+  },
+  {
+   "block_id": "dd8dd31b-ee13-43b8-950c-580832d6901e",
+   "block_index": 18,
+   "prototype_name": "process.invoke_module",
+   "fields": {
+    "module": {
+     "value": "xianyu_desc"
+    },
+    "function": {
+     "value": "main"
+    },
+    "params": {
+     "value": {
+      "group_array": [
+       {
+        "args": {
+         "expression": "{\"row\": row}"
+        }
+       }
+      ]
+     }
+    },
+    "returnType": {
+     "value": "dict"
+    }
+   },
+   "outputs": {
+    "invoke_result": "描述结果"
+   }
+  },
+  {
+   "block_id": "96f7facd-3b21-4300-9951-ed15eb8149f3",
+   "block_index": 19,
+   "prototype_name": "workflow.if",
+   "fields": {
+    "operand1": {
+     "value": {
+      "expression": "not 描述结果.get('ok', False)"
+     }
+    },
+    "operator": {
+     "choices": [
+      "==",
+      "!=",
+      ">",
+      ">=",
+      "<",
+      "<=",
+      "in",
+      "not in",
+      "is true",
+      "is false",
+      "empty value",
+      "not empty value",
+      "starts with",
+      "not starts with",
+      "ends with",
+      "not ends with"
+     ],
+     "value": "is true",
+     "default": "=="
+    },
+    "operand2": {},
+    "operator_options": {
+     "value": "{}"
+    }
+   }
+  },
+  {
+   "block_id": "a2ed8ab3-b0d2-49d0-a8b3-05b7652b0982",
+   "block_index": 20,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "int"
+    },
+    "value": {
+     "value": {
+      "expression": "3"
+     }
+    }
+   },
+   "outputs": {
+    "variable": "step"
+   }
+  },
+  {
+   "block_id": "9b64fa9d-6447-4189-b5a2-c25f8ccf65c8",
+   "block_index": 21,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "str"
+    },
+    "value": {
+     "value": {
+      "expression": "描述结果.get('error','')"
+     }
+    }
+   },
+   "outputs": {
+    "variable": "原因"
+   }
+  },
+  {
+   "block_id": "1a3541e0-392e-4543-882b-30f3d5034c3b",
+   "block_index": 22,
+   "prototype_name": "process.return",
+   "fields": {}
+  },
+  {
+   "block_id": "8ed0a022-f7c5-45e6-b143-98e149593b46",
+   "block_index": 23,
+   "prototype_name": "workflow.endif",
+   "fields": {}
+  },
+  {
+   "block_id": "bbb43887-5a57-4b15-92f8-fa014fdd25da",
+   "block_index": 24,
+   "prototype_name": "process.invoke_module",
+   "fields": {
+    "module": {
+     "value": "xianyu_category"
+    },
+    "function": {
+     "value": "main"
+    },
+    "params": {
+     "value": {
+      "group_array": [
+       {
+        "args": {
+         "expression": "{\"row\": row}"
+        }
+       }
+      ]
+     }
+    },
+    "returnType": {
+     "value": "dict"
+    }
+   },
+   "outputs": {
+    "invoke_result": "分类结果"
+   }
+  },
+  {
+   "block_id": "1d597822-ca00-497e-b7e3-ba4060b6a623",
+   "block_index": 25,
+   "prototype_name": "workflow.if",
+   "fields": {
+    "operand1": {
+     "value": {
+      "expression": "not 分类结果.get('ok', False)"
+     }
+    },
+    "operator": {
+     "choices": [
+      "==",
+      "!=",
+      ">",
+      ">=",
+      "<",
+      "<=",
+      "in",
+      "not in",
+      "is true",
+      "is false",
+      "empty value",
+      "not empty value",
+      "starts with",
+      "not starts with",
+      "ends with",
+      "not ends with"
+     ],
+     "value": "is true",
+     "default": "=="
+    },
+    "operand2": {},
+    "operator_options": {
+     "value": "{}"
+    }
+   }
+  },
+  {
+   "block_id": "7f310fbc-85a3-4f36-89ec-889a2eb0ba02",
+   "block_index": 26,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "int"
+    },
+    "value": {
+     "value": {
+      "expression": "4"
+     }
+    }
+   },
+   "outputs": {
+    "variable": "step"
+   }
+  },
+  {
+   "block_id": "76498520-2d57-491b-9708-e210fa44dd51",
+   "block_index": 27,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "str"
+    },
+    "value": {
+     "value": {
+      "expression": "分类结果.get('error','')"
+     }
+    }
+   },
+   "outputs": {
+    "variable": "原因"
+   }
+  },
+  {
+   "block_id": "09c56820-3668-4b00-818b-6ce91fae2146",
+   "block_index": 28,
+   "prototype_name": "process.return",
+   "fields": {}
+  },
+  {
+   "block_id": "28fdb787-5e04-4dff-9b03-e4c809c10589",
+   "block_index": 29,
+   "prototype_name": "workflow.endif",
+   "fields": {}
+  },
+  {
+   "block_id": "7ba5cb0c-13d2-4593-8de7-106dd8b9d01c",
+   "block_index": 30,
+   "prototype_name": "process.invoke_module",
+   "fields": {
+    "module": {
+     "value": "xianyu_price"
+    },
+    "function": {
+     "value": "main"
+    },
+    "params": {
+     "value": {
+      "group_array": [
+       {
+        "args": {
+         "expression": "{\"row\": row}"
+        }
+       }
+      ]
+     }
+    },
+    "returnType": {
+     "value": "dict"
+    }
+   },
+   "outputs": {
+    "invoke_result": "价格结果"
+   }
+  },
+  {
+   "block_id": "e178f91d-ccfb-4640-ba09-3263bad960be",
+   "block_index": 31,
+   "prototype_name": "workflow.if",
+   "fields": {
+    "operand1": {
+     "value": {
+      "expression": "not 价格结果.get('ok', False)"
+     }
+    },
+    "operator": {
+     "choices": [
+      "==",
+      "!=",
+      ">",
+      ">=",
+      "<",
+      "<=",
+      "in",
+      "not in",
+      "is true",
+      "is false",
+      "empty value",
+      "not empty value",
+      "starts with",
+      "not starts with",
+      "ends with",
+      "not ends with"
+     ],
+     "value": "is true",
+     "default": "=="
+    },
+    "operand2": {},
+    "operator_options": {
+     "value": "{}"
+    }
+   }
+  },
+  {
+   "block_id": "76029314-dd36-480b-804d-e4fa38cbc8fa",
+   "block_index": 32,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "int"
+    },
+    "value": {
+     "value": {
+      "expression": "5"
+     }
+    }
+   },
+   "outputs": {
+    "variable": "step"
+   }
+  },
+  {
+   "block_id": "f938a918-31fa-461b-b289-b1625e6d1b62",
+   "block_index": 33,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "str"
+    },
+    "value": {
+     "value": {
+      "expression": "价格结果.get('error','')"
+     }
+    }
+   },
+   "outputs": {
+    "variable": "原因"
+   }
+  },
+  {
+   "block_id": "834fa336-41d7-4393-a459-756b50837794",
+   "block_index": 34,
+   "prototype_name": "process.return",
+   "fields": {}
+  },
+  {
+   "block_id": "5c05a79f-dd90-4b6f-92c3-3f5d3874e2ae",
+   "block_index": 35,
+   "prototype_name": "workflow.endif",
+   "fields": {}
+  },
+  {
+   "block_id": "3e71b7d3-94e4-4585-ab5e-c561f4d104af",
+   "block_index": 36,
+   "prototype_name": "process.invoke_module",
+   "fields": {
+    "module": {
+     "value": "xianyu_shipping"
+    },
+    "function": {
+     "value": "main"
+    },
+    "params": {
+     "value": {
+      "group_array": [
+       {
+        "args": {
+         "expression": "{\"row\": row}"
+        }
+       }
+      ]
+     }
+    },
+    "returnType": {
+     "value": "dict"
+    }
+   },
+   "outputs": {
+    "invoke_result": "发货结果"
+   }
+  },
+  {
+   "block_id": "8049dcc9-035c-4265-a9fa-11ee4f767889",
+   "block_index": 37,
+   "prototype_name": "workflow.if",
+   "fields": {
+    "operand1": {
+     "value": {
+      "expression": "not 发货结果.get('ok', False)"
+     }
+    },
+    "operator": {
+     "choices": [
+      "==",
+      "!=",
+      ">",
+      ">=",
+      "<",
+      "<=",
+      "in",
+      "not in",
+      "is true",
+      "is false",
+      "empty value",
+      "not empty value",
+      "starts with",
+      "not starts with",
+      "ends with",
+      "not ends with"
+     ],
+     "value": "is true",
+     "default": "=="
+    },
+    "operand2": {},
+    "operator_options": {
+     "value": "{}"
+    }
+   }
+  },
+  {
+   "block_id": "349c3785-3dc9-40b0-9f8f-d27faf752337",
+   "block_index": 38,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "int"
+    },
+    "value": {
+     "value": {
+      "expression": "6"
+     }
+    }
+   },
+   "outputs": {
+    "variable": "step"
+   }
+  },
+  {
+   "block_id": "ec3eccb3-c057-4a45-840a-c6a9a70b96ee",
+   "block_index": 39,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "str"
+    },
+    "value": {
+     "value": {
+      "expression": "发货结果.get('error','')"
+     }
+    }
+   },
+   "outputs": {
+    "variable": "原因"
+   }
+  },
+  {
+   "block_id": "3fbdbeaa-bb7c-4b93-9232-cc7c18cae2ad",
+   "block_index": 40,
+   "prototype_name": "process.return",
+   "fields": {}
+  },
+  {
+   "block_id": "2d0d9668-6e49-45d0-b92d-89dc41bb1826",
+   "block_index": 41,
+   "prototype_name": "workflow.endif",
+   "fields": {}
+  },
+  {
+   "block_id": "77314eb0-6529-4438-9b43-8c8e81091003",
+   "block_index": 42,
+   "prototype_name": "process.invoke_module",
+   "fields": {
+    "module": {
+     "value": "xianyu_publish"
+    },
+    "function": {
+     "value": "main"
+    },
+    "params": {
+     "value": {
+      "group_array": [
+       {
+        "args": {
+         "expression": "{\"row\": row, \"pid\": pid, \"confirm_publish\": confirm_publish}"
+        }
+       }
+      ]
+     }
+    },
+    "returnType": {
+     "value": "dict"
+    }
+   },
+   "outputs": {
+    "invoke_result": "发布结果"
+   }
+  },
+  {
+   "block_id": "212ba9a2-9632-45f5-b230-7db0519f87f3",
+   "block_index": 43,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "str"
+    },
+    "value": {
+     "value": {
+      "expression": "发布结果.get('state','')"
+     }
+    }
+   },
+   "outputs": {
+    "variable": "state"
+   }
+  },
+  {
+   "block_id": "ef986311-ea15-4684-93fb-dcd78ed369f1",
+   "block_index": 44,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "bool"
+    },
+    "value": {
+     "value": {
+      "expression": "True"
+     }
+    }
+   },
+   "outputs": {
+    "variable": "ok"
+   }
+  },
+  {
+   "block_id": "7a127d90-eea4-4904-874e-b5e2a7c4c38d",
+   "block_index": 45,
+   "prototype_name": "process.invoke_module",
+   "fields": {
+    "module": {
+     "value": "xianyu_verdict"
+    },
+    "function": {
+     "value": "main"
+    },
+    "params": {
+     "value": {
+      "group_array": [
+       {
+        "args": {
+         "expression": "{\"pid\": pid}"
+        }
+       }
+      ]
+     }
+    },
+    "returnType": {
+     "value": "dict"
+    }
+   },
+   "outputs": {
+    "invoke_result": "判定结果"
+   }
+  },
+  {
+   "block_id": "85c6844c-fc4b-482d-80a3-b8efbf03326d",
+   "block_index": 46,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "str"
+    },
+    "value": {
+     "value": {
+      "expression": "判定结果.get('verdict','unknown')"
+     }
+    }
+   },
+   "outputs": {
+    "variable": "verdict"
+   }
+  },
+  {
+   "block_id": "784168a8-97f4-4209-9a62-46ee92535a44",
+   "block_index": 47,
+   "prototype_name": "programing.catch",
+   "fields": {},
+   "outputs": {
+    "exception": "exception"
+   }
+  },
+  {
+   "block_id": "7864978b-d023-4885-95f3-4827c760d53f",
+   "block_index": 48,
+   "prototype_name": "programing.variable",
+   "fields": {
+    "value_type": {
+     "choices": [
+      "str",
+      "int",
+      "bool",
+      "list",
+      "dict",
+      "any",
+      "float"
+     ],
+     "value": "str"
+    },
+    "value": {
+     "value": {
+      "expression": "str(exception)"
+     }
+    }
+   },
+   "outputs": {
+    "variable": "原因"
+   }
+  },
+  {
+   "block_id": "886618f3-f06a-44a0-8939-ffae24a40699",
+   "block_index": 49,
+   "prototype_name": "programing.endtry",
+   "fields": {}
+  }
+ ]
+}

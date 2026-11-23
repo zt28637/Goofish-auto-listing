@@ -13,30 +13,16 @@
 本步骤自己的元素表 ELEM；改版只改这里。
 """
 
-# ---- 仓库内跨文件夹 import 垫片（影刀 CodeFlow 是平铺的，这段在影刀里空转）----
+# ---- 仓库内跨文件夹 import 垫片（影刀 CodeFlow 是平铺的，正式跑时为空操作）----
 import os as _os
 import sys as _sys
 _HERE = _os.path.dirname(_os.path.abspath(__file__)) if "__file__" in globals() else ""
-if _HERE and _HERE not in _sys.path:          # 影刀运行时不把应用目录放进来
-    _sys.path.insert(0, _HERE)
 _ROOT = _os.path.dirname(_HERE) if _HERE else ""
-for _d in ("tool", "1.登录", "2.上传套图", "3.填写描述", "4.选择分类",
-           "5.填写价格", "6.设置发货", "7.发布", "8.判定回写"):
-    _p = _os.path.join(_ROOT, _d) if _ROOT else ""
-    if _p and _os.path.isdir(_p) and _p not in _sys.path:
+_MODS = ("tool", "1.登录", "2.上传套图", "3.填写描述", "4.选择分类",
+         "5.填写价格", "6.设置发货", "7.发布", "8.判定回写")
+for _p in ([_HERE] + [_os.path.join(_ROOT, _d) for _d in _MODS] if _ROOT else [_HERE]):
+    if _p and _p not in _sys.path:
         _sys.path.insert(0, _p)
-
-import os as _os
-import sys as _sys
-_HERE = _os.path.dirname(_os.path.abspath(__file__)) if "__file__" in globals() else ""
-if _HERE and _HERE not in _sys.path:      # 影刀运行时不把应用目录放进来
-    _sys.path.insert(0, _HERE)
-for _root in (_HERE, _os.path.dirname(_HERE) if _HERE else ""):
-    for _d in ("tool", "0.打开浏览器", "1.登录", "2.上传套图", "3.填写描述",
-               "4.选择分类", "5.填写价格", "6.设置发货", "7.发布", "8.判定回写", "9.编排"):
-        _p = _os.path.join(_root, _d) if _root else ""
-        if _p and _p not in _sys.path:
-            _sys.path.insert(0, _p)
 
 import json
 import os
@@ -79,12 +65,42 @@ def _port_open(port=PORT, timeout=1.0):
         s.close()
 
 
+def _attach(port=None):
+    """attach 到已启动的浏览器。单独成函数，方便测试替换。"""
+    from DrissionPage import ChromiumPage
+    return ChromiumPage("127.0.0.1:%d" % (port or PORT))
+
+
+def goto(page, url, retries=2):
+    """导航到 url；冷启动断连时重连再试。
+
+    冷启动时 Edge 会恢复上次的标签页，DP 拿到的首个 page 可能被顶掉
+    （PageDisconnectedError）或卡在 stopLoading；重连一个新句柄即可恢复。
+    返回最终可用的 page——调用方必须用返回值，不能继续用旧句柄。
+    """
+    last = None
+    for attempt in range(retries + 1):
+        try:
+            page.get(url, timeout=30)
+            return page
+        except Exception as e:
+            last = e
+            common.log("[登录] 打开页面失败（第%d次）：%s" % (attempt + 1, type(e).__name__))
+            if attempt < retries:
+                time.sleep(1.5)
+                try:
+                    page = _attach()
+                except Exception:
+                    pass
+    raise last
+
+
 def ensure_browser():
     """确保端口上有可用的 Edge：已开则 attach 验活，否则用固定 profile 启动。"""
     from DrissionPage import ChromiumPage, ChromiumOptions
     if _port_open():
         try:
-            page = ChromiumPage("127.0.0.1:%d" % PORT)
+            page = _attach()
             _ = page.url
             return {"ok": True, "launched": False, "detail": "复用已有浏览器",
                     "port": PORT, "profile": PROFILE}
@@ -108,7 +124,8 @@ def ensure_browser():
     co.headless(False)
     try:
         page = ChromiumPage(co)
-        page.get(common.PUBLISH_URL)
+        time.sleep(1)                      # 等 Edge 恢复标签页/首个导航落定
+        page = goto(page, common.PUBLISH_URL)
         time.sleep(2)
         return {"ok": True, "launched": True, "detail": "已启动浏览器",
                 "port": PORT, "profile": PROFILE}
@@ -230,18 +247,18 @@ def main(args=None):
     try:
         br = ensure_browser()                      # 浏览器由登录层自己保证
         if not br.get("ok"):
-            return {"ok": False, "step": 1, "error": br.get("detail")}
+            return {"ok": False, "alive": False, "step": 1, "error": br.get("detail")}
         from DrissionPage import ChromiumPage
         page = ChromiumPage("127.0.0.1:%d" % br["port"])
         if args.get("open"):
-            page.get(common.PUBLISH_URL)
+            page = goto(page, common.PUBLISH_URL)
         if args.get("check"):                      # 供 main 循环内复检
             return {"ok": True, "alive": check_alive(page)}
         ok, detail = ensure_login(page)
         return {"ok": ok, "step": 1, "detail": detail, "browser": br.get("detail")}
     except Exception as e:
         common.log("[单步] 登录 失败：%s" % e)
-        return {"ok": False, "step": 1, "error": str(e)}
+        return {"ok": False, "alive": False, "step": 1, "error": str(e)}
 
 
 

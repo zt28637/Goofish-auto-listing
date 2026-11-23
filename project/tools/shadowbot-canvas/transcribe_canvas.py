@@ -5,11 +5,11 @@
   - 按 FLOW_MAP 直接写回 project/modules/<环节>/<画布名>.md（覆盖旧转录）
   - 行格式与既有画布一致：编号  指令名  参数=值  →目标流程  [机器名]
 
-前提：影刀编辑器已启动，停在"淘宝竞品价格监控自动化"应用页。
+前提：影刀编辑器已启动，停在本仓应用「自动化上架」页（sb_mcp.wrong_app 会拦开错应用）。
 用法：python transcribe_canvas.py            # 全部映射流程
       python transcribe_canvas.py main       # 只转指定 flow_id
 
-不改动任何 .py 业务代码；1-3滚动策略优化蓝本.md 是设计文档、非转录，勿映射。
+不改动任何 .py 业务代码。
 """
 
 import datetime
@@ -28,51 +28,26 @@ MOD = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "modu
 CATALOG = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sb_blocks_zh.json")
 
 # flow_id -> (相对 project/modules 的画布路径)。新增画布在此登记。
+# 本仓应用「自动化上架」2026-11-23 起为三层编排：main(8) → process2 逐行上架(51) → process3 单件上架(50)。
 FLOW_MAP = {
     "main": "主流程_main.md",
-    "process65": "0.淘宝自动化登录/0-0自动化登录.md",
-    # 文件名沿用仓库旧名"凭据"（README/USER-CONFIG 均引用此名）；画布标题以编辑器流程名"凭证"为准
-    "process66": "0.淘宝自动化登录/0-1登录凭据设置.md",
-    "process67": "0.淘宝自动化登录/0-2模拟登录.md",
-    "process51": "1.竞品商品数据采集/1-1商品数据采集.md",
-    "process64": "1.竞品商品数据采集/1-2下一页按钮翻页.md",
-    "process62": "2.竞品SKU数据采集/2-0B-SKU数据采集.md",
-    "process59": "2.竞品SKU数据采集/2-1B1-SKU一维数据采集.md",
-    "process60": "2.竞品SKU数据采集/2-2B2-SKU二维数据采集.md",
-    "process68": "工具箱/通用滚动策略.md",
-    # 项目二：process3（192 块）已于 2026-11-09 删除，转录归档在 docs/archive/；
-    # 现行为影刀 main（55 块编排）+ project/modules 下各步骤 CodeFlow。
+    "process2": "逐行上架.md",
+    "process3": "单件上架.md",
 }
+# 旧映射（process65~68 等项目一画布）已随 2026-11-23 三层改版清出；项目一画布转录归项目一仓管。
 # process61 测试主流程：开发期试验场，刻意不落盘（沿用旧索引约定）
 # 工具箱/通用滚动策略.md = process68（影刀组"工具箱"，1-1/2-0 等共用）
 
 # 手工注记（画布块序号 → 行尾追加文字），重转录自动保留
-NOTES = {
-    "process66": {1: "用户根变量", 2: "档目录变量", 3: "凭据文件变量"},
-}
-# 文末附录（flow_id → markdown 段落），重转录自动保留
-APPENDIX = {
-    "main": """
-## 审核疑点（2026-09-30 · 对照模块 .py 签名交叉核对，仅记录，未改画布）
-- **011 路径拼写**：导出目录 `product_alllraw`（3个l），磁盘实际为 `runtime/product_allraw` → 会静默新建错误目录，下游按实际名找不到文件
-- **019 多余且有害的 report 调用**：`output_path=input 竞品清洗Excel`（report.py 会覆盖清洗产物），023 再调用时读到的已是被日报覆盖的文件而非 13 列清洗表；015→019→023 三连里 019 疑似返工遗留，应删（023 单独保留即可，或改 output_path）
-- **027 alert keyword 传错**：alert.py 的 `keyword` 是"搜索关键词（拼消息标题）"，画布传了 `glv['dingtalk_secret']`（钉钉加签密钥）→ 标题出现密钥字样=泄露；且 alert.py 本身不实现加签，机器人若为"加签"型则发送会 401（若是"自定义关键词"型，此参数应传关键词文本而非 secret）
-- **012/016 重复赋值**：`竞品清洗Excel` 同一表达式赋值两次（冗余无害）
+NOTES = {}
+# 文末附录（flow_id → markdown 段落），重转录自动保留。
+# 旧 main 附录（011/019/027 等审核疑点）属项目一画布，2026-11-23 随三层改版移除，见项目一仓。
+APPENDIX = {}
 
-> 复核 2026-10-08（重转录后逐条对照新画布）：**四条疑点在原位置全部仍成立**（011/012/016/019/023/027 块号未变）。
-""",
-}
-
-# 敏感字段转录后自动脱敏（render_flow 内、落盘/预览前执行；仅登记流程生效，勿用于项目一）。
-# 画布块 016 手机号、017 剪贴板密码：mask() 只认 token=，覆盖不到，靠手工补会漏。
-POST_MASK = {
-    "process3": [
-        (re.compile(r"文本内容=1[3-9]\d{9}"), "文本内容=152****手机号(已脱敏)"),
-        # 值后必须留 (\s+\[机器名\]) 捕获组：整行吞会把行尾 [clipboard.set_text] 一起脱掉。
-        # 变量引用（内容源=变量=密码）不是明文，放行；只脱字面量（11-07 凭据外置后）。
-        (re.compile(r"(设置剪切板内容\s+内容源=)(?!变量=).*?(\s+\[[\w.]+\])"), r"\g<1>***密码(已脱敏)\g<2>"),
-    ],
-}
+# 敏感字段转录后自动脱敏（render_flow 内、落盘/预览前执行；仅登记流程生效）。
+# 旧 process3（咸鱼_批量上架，192 块）已删，其手机号/剪贴板密码脱敏规则随之退役；
+# 本仓凭据已外置 conf/credentials.local.json，画布与转录不应出现明文（secret_scan 把关）。
+POST_MASK = {}
 
 MODE_CN = {
     "variable": "变量",

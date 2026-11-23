@@ -19,35 +19,76 @@ project/modules/
 ├── tool/         xianyu_common.py    路径 / 状态枚举 / 日志 / 单步入口
 │                    ui_action.py        pick/click/fill/hover + wait_stable（同项目一 ui_action）
 │                    xianyu_excel.py     清单读写（步骤里读行、供单步测试）
-├── 测试/           fakes.py + test_*.py（纯离线，43 条）
+├── 测试/           fakes.py + test_*.py（纯离线，55 条）
 └── README.md
 ```
 
 **元素表归各步骤自己持有**：每个步骤文件顶部的 `ELEM` 只写本步骤用到的元素，
 改版时只改那一个文件；`tool/ui_action.py` 只提供通用动作（对应项目一的 `model/tool/ui_action.py`）。
 
-## 影刀 main 的编排（54 块）
+## 逻辑文件（8 个节点各一个 · 先读这里，再读代码）
+
+每个节点目录下的 `logic.md` 是**人怎么判断**的说明书；该节点的 `.py` 是它的实现。
+**一个节点一个逻辑文件**，不按动作拆文件；**改行为先改逻辑文件，再改代码，再同步影刀。**
+
+| 节点 | 逻辑文件 |
+|------|----------|
+| 1.登录 | [logic.md](1.登录/logic.md) |
+| 2.上传套图 | [logic.md](2.上传套图/logic.md) |
+| 3.填写描述 | [logic.md](3.填写描述/logic.md) |
+| 4.选择分类 | [logic.md](4.选择分类/logic.md) |
+| 5.填写价格 | [logic.md](5.填写价格/logic.md) |
+| 6.设置发货 | [logic.md](6.设置发货/logic.md) |
+| 7.发布 | [logic.md](7.发布/logic.md) |
+| 8.判定回写 | [logic.md](8.判定回写/logic.md) |
+
+**写法**：每个文件先给总流程图，再按
+`动作与代码对照 → 动作细节 → 对外契约 → 已知缺口与实测记录 → 测试与回归 → 对应代码` 写。
+逻辑文件只写「人怎么判断」，代码细节不进；没实测的结论标「未验证」，不写成已通过。
+
+## 影刀编排（2026-11-23 起三层，对齐项目一 v3 模式）
+
+**三层 = main(8) → 逐行上架(51) → 单件上架(50)**：画布只做顺序、分支、重试、状态回写；
+业务逻辑全在 `xianyu_*` CodeFlow。层间数据走显式 In/Out 参数（`process.run`），
+Excel 对象不出「逐行上架」层。
 
 ```
-precheck 闸门（fail>0 直接退出）
-→ 打开 Excel（商品清单.xlsx）
-→ 调用 xianyu_login     （args={open:true}：确保 9224 浏览器 + 打开发布页 + 登录）
-→ 循环 Excel 行：
-    状态 ≠ 待上架        → 继续下一行
-    登录复检（check）    → 掉线则写「中断·登录失效」并退出循环
-    Try：
-      调用 xianyu_upload / xianyu_desc / xianyu_category
-      分类失败           → 写「上架失败」→ 继续下一行
-      调用 xianyu_price / xianyu_shipping
-      写「上架中」+ 保存
-      调用 xianyu_publish（args={row, pid}）
-      调用 xianyu_verdict（args={pid}）→ 按 verdict 写 成功/失败/不明 + 保存
-    Catch：写「上架失败」+ 保存
-→ 关闭 Excel（保存）
-→ 导出运行日志
+main（8 块，纯编排 + 总兜底）
+  打印日志 → Try：
+    调用流程「逐行上架」（In: 清单路径 / 自动发布；Out: 成功数 / 失败数）
+    打印汇总
+  Catch：写 runtime/logs/shadowbot_error.txt + error 日志
+
+逐行上架（51 块，Excel 的唯一持有者）
+  precheck 闸门（fail>0 直接退出）
+  → 打开 Excel → xianyu_login(open) → 循环行：
+      状态 ≠ 待上架 → 跳过
+      Try：写「上架中」+ 保存
+        调用流程「单件上架」（In: row/pid/confirm_publish；Out: ok/state/verdict/step/原因/中断）
+        中断=True   → 写「中断·登录失效」→ 退出循环
+        verdict=success → 上架成功 / 成功数+1
+        state=clicked   → 上架情况不明，待人工确认 / 失败数+1
+        state=dry       → 只打日志，保持待上架（试发布不回写）
+        否则            → 上架失败 / 失败数+1
+      Catch：写「上架情况不明，待人工确认」（Excel 层异常时发布态无法证明，按不明处理）
+  → 关闭 Excel → 导出日志 → 打印汇总
+
+单件上架（50 块，8 步串联，自带 Try/Catch 不向调用方抛异常）
+  xianyu_login(open+check) → alive=False 置「中断」并返回
+  → upload / desc / category / price / shipping
+      任一步 ok=False → step=该步号、原因=error 字段，直接返回
+  → xianyu_publish → state=clicked/dry/click_failed
+  → xianyu_verdict → verdict
+  Catch：原因=str(exception)（state 保持已取得的值）
 ```
 
-转录：[../主流程_main.md](../主流程_main.md)（编辑器改动后必须重跑 `transcribe_canvas.py main`）。
+转录：[主流程_main.md](主流程_main.md) · [逐行上架.md](逐行上架.md) · [单件上架.md](单件上架.md)
+（编辑器改动后重跑 `transcribe_canvas.py`，再 `verify.py`）。
+
+与旧版（单 main 83 块）的口径差异，均为有意变更：
+- 「上架中」提前到调用单件流程**之前**写——中断在任意一步都能从 Excel 看出本行进行到一半（对账口径不变：preflight 查「上架中」残留）。
+- 逐行层 Catch 统一写「不明」而非「失败」——该层异常发生在发布态不可证明的位置，按「状态必须可证明」只认不明。
+- `state=dry`（试发布）不回写任何状态，行保持「待上架」可重跑。
 
 ## 步骤契约
 
@@ -60,7 +101,9 @@ main({"excel_row": 6})          # 行号由模块自己去清单里读
 ```
 
 返回值统一 `{"ok": bool, "step": n, ...}`；`xianyu_verdict` 额外带 `verdict`
-（`success` / `failed` / `unknown`），`xianyu_login` 的 `check` 模式带 `alive`。
+（`success` / `unknown`——点过发布之后不再返回 `failed`），`xianyu_publish` 带
+`state`（`clicked` / `dry` / `click_failed`），`xianyu_login` 的 `check` 模式带 `alive`
+（失败路径显式 `alive:false`）。
 
 ## 单步测试
 
@@ -75,7 +118,7 @@ python "project/modules/7.发布/xianyu_publish.py" --row 6                  # �
 python "project/modules/7.发布/xianyu_publish.py" --row 6 --confirm-publish # 真发
 python "project/modules/8.判定回写/xianyu_verdict.py" --open
 
-# 离线节点测试（43 条）
+# 离线节点测试（55 条）
 python -m unittest discover -s "project/modules/测试" -t "project/modules/测试"
 ```
 

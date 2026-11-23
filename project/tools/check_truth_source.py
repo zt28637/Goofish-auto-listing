@@ -90,6 +90,13 @@ def main() -> int:
     ap.add_argument("--offline", action="store_true", help="不连编辑器，只比转录/快照/文档")
     a = ap.parse_args()
 
+    if not a.offline:
+        bad = sb_mcp.wrong_app()
+        if bad:
+            print(f"[!] 编辑器当前打开的是「{bad}」，本仓应用是「{sb_mcp.EXPECTED_APP_NAME}」。")
+            print("    再比下去就是拿别家画布判本仓不一致。请切到本仓应用后重跑；不依赖画布的部分用 --offline。")
+            return 2
+
     try:
         counts = canvas_counts(a.offline)
     except RuntimeError as e:

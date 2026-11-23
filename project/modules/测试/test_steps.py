@@ -250,14 +250,27 @@ class TestPublish(_Quiet):
             self.assertEqual(publish.publish(page, "P005"), "clicked")
         self.assertEqual(btn.clicks, 1)
 
+    def test_main_failure_reports_click_failed(self):
+        """点击抛错按「没点成」上报，画布据此才敢写「上架失败」。"""
+        with mock.patch.object(common, "step_browser", side_effect=RuntimeError("x")):
+            r = publish.main({"pid": "P005", "confirm_publish": True})
+        self.assertFalse(r["ok"])
+        self.assertEqual(r["state"], "click_failed")
+
 
 class TestVerdict(_Quiet):
     def setUp(self):
         super().setUp()
         self._rec = mock.patch.object(verdict, "_record")
         self._rec.start()
+        self._wait = verdict.RETRY_WAIT
+        verdict.RETRY_WAIT = 0.05
+        # 注意：不能把 time.sleep 换成 mock。_poll_item 是「到点才退出」的轮询，
+        # sleep 被 mock 后会变成忙等，每次 time.sleep(0.5) 都记进 mock.call_args_list，
+        # 在内存紧张时直接把测试进程撑到 MemoryError（2026-11-17 实测）。
 
     def tearDown(self):
+        verdict.RETRY_WAIT = self._wait
         self._rec.stop()
         super().tearDown()
 
@@ -273,10 +286,24 @@ class TestVerdict(_Quiet):
         page.url = "https://www.goofish.com/item?id=1096805699542"
         self.assertEqual(verdict.judge(page, "P005"), "success")
 
-    def test_failed_anchor_clicks_again(self):
+    def test_clicked_but_unconfirmed_is_unknown(self):
+        """补点后仍不能确认 → 不明；点过发布之后绝不写「失败」。"""
         btn = fakes.FakeEle()
-        self.assertEqual(verdict.judge(self._page(None, btn), "P005"), "failed")
-        self.assertEqual(btn.clicks, 1)          # 补点一次（画布 174）
+        self.assertEqual(verdict.judge(self._page(None, btn), "P005"), "unknown")
+        self.assertEqual(btn.clicks, 1)
+
+    def test_retry_click_then_navigates_is_success(self):
+        page = self._page(None, None)
+        btn = fakes.FakeEle(on_click=lambda _el: setattr(
+            page, "url", "https://www.goofish.com/item?id=1"))
+        page.ele_map[verdict.ELEM["发布"][0]] = btn
+        self.assertEqual(verdict.judge(page, "P005"), "success")
+        self.assertEqual(btn.clicks, 1)
+
+    def test_no_retry_after_click_is_unknown(self):
+        btn = fakes.FakeEle()
+        self.assertEqual(verdict.judge(self._page(None, btn), "P005", retry=False), "unknown")
+        self.assertEqual(btn.clicks, 0)
 
     def test_unknown_anchor(self):
         self.assertEqual(verdict.judge(self._page(None, None), "P005"), "unknown")
@@ -284,6 +311,14 @@ class TestVerdict(_Quiet):
     def test_success_records_ledger(self):
         verdict.judge(self._page(fakes.FakeEle(), fakes.FakeEle()), "P005")
         verdict._record.assert_called_with("P005", "success")
+
+    def test_main_error_still_returns_unknown_verdict(self):
+        """判定步骤自己炸了也必须带 verdict 键，画布才不会 KeyError 兜成「失败」。"""
+        with mock.patch.object(common, "step_browser", side_effect=RuntimeError("浏览器不可用")):
+            r = verdict.main({"pid": "P005"})
+        self.assertFalse(r["ok"])
+        self.assertEqual(r["verdict"], "unknown")
+        verdict._record.assert_any_call("P005", "unknown")
 
 
 class TestSingleStepEntry(unittest.TestCase):
